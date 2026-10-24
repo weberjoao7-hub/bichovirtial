@@ -112,7 +112,7 @@ function draw(){
  const p=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x,y,w,h)};
  const oval=(x,y,rx,ry,col)=>{ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()};
  const colors={cat:['#f2aa69','#a66753','#fff3dc','#4d4149','#e78fa4'],bunny:['#e8cdb4','#ab888a','#fff9ef','#6e5665','#efa5b8'],bear:['#bf8057','#855439','#f9dbaa','#57403b','#eb9c9a']}[pet.type]||['#f2aa69','#a66753','#fff3dc','#4d4149','#e78fa4'];
- const [fur,shade,cream,ink,pink]=colors;
+ const [fur,shade,cream,ink,pink]=colors;const frame=Math.floor(t/230)%4,action=pet.animation||'idle';
  if(pet.dead){p(14,52,36,3,shade);p(27,41,10,12,ink);return}
  if(phase==='OVO'||phase==='CHOCANDO'){
   oval(32,34,20,25,ink);oval(32,33,18,23,cream);oval(23,27,6,9,fur);oval(41,43,6,7,fur);oval(32,42,5,5,pink);p(24,17,9,3,'#fff');
@@ -120,7 +120,7 @@ function draw(){
   return;
  }
  const scale=phase==='BEBÊ'?.71:phase==='JOVEM'?.87:1;
- ctx.save();ctx.translate(32,55);ctx.scale(scale,scale);ctx.translate(-32,-55);
+ ctx.save();ctx.translate(32,55);ctx.scale(scale,scale);ctx.translate(-32,-55);if(action==='play'&&frame%2===0){ctx.translate(0,-3)}if(action==='stretch'&&frame%2===0){ctx.translate(0,3);ctx.scale(1.1,.91)}
  if(pet.type==='cat'){
   p(9,12,17,24,ink);p(38,12,17,24,ink);p(13,16,10,14,pink);p(41,16,10,14,pink);
   oval(49,48,10,10,shade);oval(51,44,5,7,fur);
@@ -135,20 +135,20 @@ function draw(){
  if(pet.type==='bunny'){oval(31,40,14,11,cream);oval(20,26,9,9,cream)}
  if(pet.type==='bear'){oval(31,41,13,10,cream);oval(30,36,12,9,cream)}
  oval(22,52,9,6,ink);oval(42,52,9,6,ink);oval(22,51,7,4,fur);oval(42,51,7,4,fur);
- const closing=pet.asleep||(t%4800<170)||pet.animation==='sleep';
+ const closing=pet.asleep||(t%4800<170)||action==='sleep'||(action==='wash'&&frame===2);
  if(closing){p(18,35,11,2,ink);p(36,35,11,2,ink)}
  else{oval(23,35,5,7,ink);oval(41,35,5,7,ink);p(24,32,2,3,'#fff');p(42,32,2,3,'#fff')}
  oval(16,42,5,3,pink);oval(48,42,5,3,pink);oval(32,43,4,3,pink);
- if(pet.animation==='eat'){oval(32,49,7,5,ink);oval(32,49,4,3,pink)}
+ if(action==='eat'){oval(32,49,7,frame%2===0?3:6,ink);oval(32,49,4,frame%2===0?2:4,pink)}
  else if(pet.animation==='play'||pet.joy>65){p(27,48,10,2,ink)}
  else{p(29,49,6,2,ink)}
- if(pet.animation==='wash'){p(12,23,5,5,'#9be9ed');p(48,21,6,6,'#a7f3f5');p(35,12,4,4,'#fff')}
- if(pet.animation==='heal'){p(29,18,6,3,'#ef667a');p(30,16,4,8,'#ef667a')}
- if(pet.animation==='eat'){p(49,47,8,7,'#e94f5f');p(52,44,3,4,'#78b95b')}
- if(pet.animation==='play'){p(51,51,9,9,'#ed7993');p(54,51,2,8,'#ffe4a7')}
+ if(action==='wash'){p(frame%2?9:14,23,5,5,'#9be9ed');p(frame%2?48:43,21,6,6,'#a7f3f5');p(35,12+(frame%3)*2,4,4,'#fff')}
+ if(action==='heal'){p(29,18-(frame%2)*3,6,3,'#ef667a');p(30,16-(frame%2)*3,4,8,'#ef667a')}
+ if(action==='eat'){p(49-(frame%3)*3,47+(frame%2),8,7,'#e94f5f');p(52-(frame%3)*3,44,3,4,'#78b95b')}
+ if(action==='play'){p(48+(frame%3)*2,49+(frame%2)*3,9,9,'#ed7993');p(51+(frame%3)*2,49,2,8,'#ffe4a7')}
  if(pet.animation==='stretch'){p(10,46,12,6,fur);p(45,45,12,6,fur)}
  if(pet.health<25){p(27,23,10,3,'#8ab08e')}
- if(phase==='ADULTO'){p(28,18,8,3,cream);p(30,15,4,4,shade)}
+ if(phase==='ADULTO'){p(28,18,8,3,cream);p(30,15,4,4,shade)}if(action==='idle'&&!pet.asleep&&frame===3){p(9,45,6,2,cream)}if(action==='hop'){p(19,54,8,3,pink);p(37,54,8,3,pink)}
  ctx.restore();
 }
 function render(){if(!pet)return;const fields=[['🍎 Saciedade','hunger'],['😊 Felicidade','joy'],['⚡ Energia','energy'],['🧼 Higiene','clean'],['❤️ Saúde','health']];$('stats').innerHTML=fields.map(([t,k])=>'<div class="stat"><label><span>'+t+'</span><span>'+Math.round(pet[k])+'%</span></label><div class="track"><div class="fill '+(pet[k]<30?'low':'')+'" style="width:'+pet[k]+'%"></div></div></div>').join('')+'<div class="stat"><label><span>🪙 Moedas</span><span>'+pet.coins+'</span></label><div class="track"><div class="fill" style="width:'+Math.min(100,pet.coins)+'%"></div></div></div>';
