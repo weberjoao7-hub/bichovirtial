@@ -75,11 +75,11 @@ function draw(){if(!pet)return;const c=$('pet'),ctx=c.getContext('2d');ctx.clear
 const S=species[pet.type]||species.cat,adult=stage()==='ADULTO',baby=stage()==='BEBÊ';
 const rect=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x,y,w,h)};
 const outline='#52634b',body=S.color;
-if(pet.dead){rect(17,48,30,3,'#6f8869');rect(21,45,5,3,out);return}
+if(pet.dead){rect(17,48,30,3,'#6f8869');rect(21,45,5,3,outline);return}
 if(S.ear){if(pet.type==='bunny'){rect(18,3,10,25,outline);rect(36,3,10,25,outline);rect(20,5,6,21,'#e5aabb');rect(38,5,6,21,'#e5aabb')}else{rect(13,13,14,19,outline);rect(37,13,14,19,outline);rect(16,16,8,12,'#d78385');rect(40,16,8,12,'#d78385')}}else{rect(12,17,13,13,outline);rect(39,17,13,13,outline);rect(15,19,8,9,body);rect(41,19,8,9,body)}
 rect(15,24,34,30,outline);rect(18,21,28,31,body);rect(13,31,38,19,body);rect(17,49,30,6,outline);rect(20,48,24,5,body);rect(17,51,9,6,outline);rect(38,51,9,6,outline);
 if(adult){rect(17,26,30,1,'#ffffff55')}if(baby){rect(24,42,16,10,'#fff6db')}
-if(pet.asleep){rect(21,37,8,2,outline);rect(36,37,8,2,outline);rect(30,43,4,2,out)}else if(pet.health<28){rect(22,36,6,2,out);rect(37,36,6,2,out);rect(30,44,4,2,out)}else{rect(22,35,7,8,out);rect(37,35,7,8,out);rect(24,36,2,3,'#fff');rect(39,36,2,3,'#fff');rect(30,44,4,3,'#ba7881');if(pet.joy>35){rect(28,48,8,2,out)}else{rect(29,49,6,2,out)}}
+if(pet.asleep){rect(21,37,8,2,outline);rect(36,37,8,2,outline);rect(30,43,4,2,outline)}else if(pet.health<28){rect(22,36,6,2,outline);rect(37,36,6,2,outline);rect(30,44,4,2,outline)}else{rect(22,35,7,8,outline);rect(37,35,7,8,outline);rect(24,36,2,3,'#fff');rect(39,36,2,3,'#fff');rect(30,44,4,3,'#ba7881');if(pet.joy>35){rect(28,48,8,2,outline)}else{rect(29,49,6,2,outline)}}
 rect(17,44,5,3,'#eb979b');rect(43,44,5,3,'#eb979b');if(pet.clean<25){rect(13,41,4,3,'#829b60');rect(47,47,4,3,'#829b60')}
 }
 function render(){if(!pet)return;const fields=[['🍎 Saciedade','hunger'],['😊 Felicidade','joy'],['⚡ Energia','energy'],['🧼 Higiene','clean'],['❤️ Saúde','health']];$('stats').innerHTML=fields.map(([t,k])=>'<div class="stat"><label><span>'+t+'</span><span>'+Math.round(pet[k])+'%</span></label><div class="track"><div class="fill '+(pet[k]<30?'low':'')+'" style="width:'+pet[k]+'%"></div></div></div>').join('')+'<div class="stat"><label><span>🪙 Moedas</span><span>'+pet.coins+'</span></label><div class="track"><div class="fill" style="width:'+Math.min(100,pet.coins)+'%"></div></div></div>';
