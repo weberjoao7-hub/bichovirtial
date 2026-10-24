@@ -34,6 +34,38 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 .hidden{display:none!important}.help{font-size:12px!important;color:#656477}
 @keyframes eggwiggle{0%,100%{transform:translate(-50%,-43%) rotate(-3deg)}50%{transform:translate(-50%,-48%) rotate(3deg)}}#pet.egg{animation:eggwiggle .75s ease-in-out infinite}@keyframes bob{50%{transform:translate(-50%,-47%)}}@keyframes hop{40%{transform:translate(-50%,-66%)}}@keyframes sleep{50%{transform:translate(-50%,-40%) rotate(-3deg)}}@keyframes float{to{opacity:0;transform:translateY(-65px)}}@keyframes drift{to{transform:translateX(22px)}}
 @media(max-width:370px){body{padding:9px}.console{padding:28px 20px 32px}.screen{height:275px}.scene{height:185px}.hardbtn{width:52px;height:42px}.actions{gap:5px}}
+
+/* Mobile game cockpit v0.4 — controls always in the first viewport */
+html,body{height:100%;overscroll-behavior:none}
+body{height:100dvh;min-height:0;padding:7px max(7px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom));overflow:hidden;align-items:stretch;justify-content:center}
+.layout{width:min(100%,470px);height:100%;min-height:0;margin:auto;display:flex;flex-direction:column;gap:6px}
+.top{height:20px;min-height:20px;padding:0 7px}.top strong{font-size:11px}.top span{font-size:11px}
+.console{flex:1 1 39%;min-height:160px;padding:20px 18px 12px;border-width:4px;border-radius:35px 35px 28px 28px;box-shadow:inset 3px 3px 0 #ffffff6e,inset -5px -5px 0 #ad587b70,0 4px 12px #26345225;display:flex;flex-direction:column}
+.console:before{top:6px;font-size:9px}
+.bezel{min-height:0;flex:1;margin-top:1px;border-width:5px;border-radius:16px;padding:4px;display:flex;flex-direction:column}
+.screen{height:100%;min-height:0;display:flex;flex-direction:column}
+.screen-head{height:24px;min-height:24px;font-size:10px;padding:0 9px}
+.scene{flex:1;min-height:0;height:auto}
+#pet{width:min(36vw,130px);height:min(36vw,130px)}
+.screen-bottom{min-height:23px;padding:3px 9px;font-size:10px}
+.nameplate,.hardware{display:none}
+.dashboard{flex:0 1 auto;min-height:0;display:flex;flex-direction:column;padding:10px 12px;border-radius:16px;box-shadow:0 4px 12px #3e425020}
+.identity h1{font-size:16px}.identity p{font-size:10px;margin-top:1px}.tag{font-size:9px;padding:5px 7px}
+.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:8px 0}
+.stat{padding:6px;border-radius:9px;min-width:0}
+.stat label{font-size:9px;margin-bottom:4px;gap:3px;white-space:nowrap}
+.track{height:6px}
+.actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.action{min-height:52px;padding:6px 2px;border-radius:11px;font-size:10px;line-height:1.1}
+.action i{font-size:21px;margin:0 0 3px}
+.message{margin-top:7px;padding:7px 9px;min-height:29px;max-height:42px;overflow:hidden;font-size:10px;line-height:1.25}
+.footer{min-height:19px;justify-content:space-evenly;align-items:center;padding:0 3px;gap:8px;font-size:9px}
+.footer>span{display:none}.footer button{font-size:10px;white-space:nowrap}
+.overlay{padding:12px;overflow:auto}.modal{max-height:calc(100dvh - 24px);overflow-y:auto;padding:15px}.modal h2{font-size:20px}.modal p{font-size:13px}
+@media(max-height:740px){.console{flex-basis:33%;min-height:135px;padding:18px 14px 9px}.screen-head{height:20px;min-height:20px}.screen-bottom{min-height:21px}.dashboard{padding:8px 10px}.stats{margin:6px 0}.stat{padding:5px}.action{min-height:46px;padding:4px 2px}.action i{font-size:18px}.message{margin-top:5px;padding:5px;min-height:25px}}
+@media(max-height:610px){.top{height:15px;min-height:15px}.console{min-height:112px;padding:15px 10px 6px}.bezel{border-width:3px}.screen-head{min-height:16px;height:16px}.screen-bottom{min-height:17px;font-size:9px}.stats{gap:3px;margin:4px 0}.stat{padding:3px}.stat label{font-size:8px}.action{min-height:39px;font-size:9px}.action i{font-size:16px}.message{max-height:24px;min-height:21px}.dashboard{padding:6px 8px}.identity p{display:none}.footer{min-height:15px}}
+@media(max-width:360px){.console{padding-left:11px;padding-right:11px}.stat label{font-size:8px}.tag{font-size:8px}.action{font-size:9px}}
+@media(min-width:650px) and (min-height:800px){.console{flex-basis:49%}#pet{width:150px;height:150px}}
 </style>
 </head>
 <body>
