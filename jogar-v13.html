@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#292c43"><title>Bicho Virtual — Pocket Pet</title>
+<style>
+:root{--ink:#283044;--soft:#696e82;--pink:#ed7993;--cream:#fff9ec;--shell:#f4b6ad;--lcd:#c7ddad;--dark:#475c45}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0%,#f9e7d7,#aebed1);min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Trebuchet MS,system-ui,sans-serif;color:var(--ink)}
+button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible{outline:3px solid #365ca9;outline-offset:3px}
+.layout{width:min(100%,455px);display:grid;gap:12px}.top{display:flex;justify-content:space-between;align-items:center;padding:0 12px}.top strong{letter-spacing:2px;font-size:13px}.top span{font-size:12px}
+.console{border:5px solid #d68e93;border-radius:43% 43% 39% 39% / 29% 29% 42% 42%;padding:30px 28px 37px;background:linear-gradient(125deg,#ffd9c5,#f39aa9 54%,#d881a1);box-shadow:inset 5px 6px 0 #ffffff6e,inset -7px -8px 0 #ad587b70,0 19px 0 #8d66786e,0 29px 45px #26345235;position:relative}
+.console:before{content:"POCKET FRIEND";position:absolute;top:15px;left:0;right:0;text-align:center;font-size:10px;font-weight:900;letter-spacing:4px;color:#84385f}
+.bezel{margin-top:10px;background:#5d6171;border:8px solid #5e6373;border-radius:25px;padding:9px;box-shadow:inset 0 3px 10px #2d3440,0 4px 3px #b66d83}
+.screen{background:var(--lcd);height:310px;border-radius:11px;position:relative;overflow:hidden;box-shadow:inset 0 0 30px #7d9b75;image-rendering:pixelated}
+.screen:after{content:"";pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(0deg,#223b1511 0 1px,transparent 1px 5px);opacity:.45}
+.screen-head{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font:700 12px monospace;color:#4b654c}
+.scene{height:218px;position:relative;overflow:hidden;background:linear-gradient(#cde3b9 0 76%,#adc69b 76%);border-top:2px solid #9db58b;border-bottom:2px solid #9db58b}
+.cloud{position:absolute;font-size:25px;opacity:.45;animation:drift 7s ease-in-out infinite alternate}.cloud.a{top:10px;left:14px}.cloud.b{top:34px;right:20px;animation-delay:-3s}
+.floor{position:absolute;bottom:19px;left:20%;width:60%;height:15px;border-radius:50%;background:#7c977b55}
+#pet{display:block;position:absolute;left:50%;top:50%;width:152px;height:152px;transform:translate(-50%,-43%);image-rendering:pixelated;filter:drop-shadow(2px 5px 0 #819b7f55);animation:bob 1.9s ease-in-out infinite;cursor:pointer}
+#pet.sleep{animation:sleep 2s ease-in-out infinite}#pet.hop{animation:hop .45s ease-in-out 2}#pet.sick{filter:grayscale(.65)}
+.effect{position:absolute;left:50%;top:20%;font-size:24px;pointer-events:none;animation:float 1s ease-out forwards}
+.object{position:absolute;bottom:15px;font-size:26px;animation:bob 2s ease-in-out infinite}
+.screen-bottom{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;font:700 11px monospace;color:#486145}.tiny-pill{border:2px solid #819c79;border-radius:12px;padding:2px 7px}
+.nameplate{text-align:center;margin:12px 0 14px;font-weight:900;letter-spacing:2px;font-size:15px;color:#73385d;text-shadow:0 1px #fff7}
+.hardware{display:flex;justify-content:space-evenly;align-items:center}.hardbtn{width:60px;height:46px;border-radius:50%;border:4px solid #ce708b;background:linear-gradient(#fff6ee,#ffb9b3);box-shadow:0 5px 0 #a55d80,inset 0 3px 0 #fff;font-size:20px;color:#873e65}.hardbtn:active{transform:translateY(4px);box-shadow:0 1px 0 #a55d80}
+.dashboard{background:#fffdf5e9;border-radius:24px;padding:17px;box-shadow:0 9px 25px #3e425025}
+.identity{display:flex;justify-content:space-between;align-items:center;gap:10px}.identity h1{font-size:20px;margin:0}.identity p{margin:3px 0 0;color:var(--soft);font-size:12px}.tag{background:#ffe5e5;border-radius:15px;padding:7px 10px;font-size:11px;font-weight:800}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.stat{background:#f2eee4;padding:9px;border-radius:13px}.stat label{display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:6px}.track{height:9px;border-radius:10px;background:#d6d5c8;overflow:hidden}.fill{width:70%;height:100%;border-radius:10px;background:#73b790;transition:width .4s}.fill.low{background:#ed9c77}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.action{background:#fff;border:2px solid #e9dfd8;border-radius:15px;padding:10px 4px;font-size:11px;font-weight:800;min-height:72px}.action i{display:block;font-style:normal;font-size:25px;margin-bottom:5px}.action:active{transform:scale(.96);background:#fff0e7}
+.message{min-height:39px;margin-top:12px;background:#f8efde;border-radius:13px;padding:11px;text-align:center;font-size:12px;font-weight:700;color:#72546a}
+.footer{display:flex;justify-content:space-between;font-size:11px;padding:0 8px;color:#344358}.footer button{color:#344358;border:0;background:transparent;text-decoration:underline;padding:0}.footer{flex-wrap:wrap;gap:9px}.food-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.food-grid button{border:2px solid #ead1c0;background:#fff;border-radius:14px;padding:12px 5px;font-weight:800;font-size:12px}.food-grid button span{display:block;font-size:25px;margin-bottom:5px}.achievement{padding:11px;text-align:left;background:#f5ecdf;border-radius:13px;margin:7px 0;font-size:13px}.achievement.locked{opacity:.5}.spark{position:absolute;inset:auto 0 10px;text-align:center;font:700 10px monospace;color:#526d48;pointer-events:none}
+.overlay{position:fixed;inset:0;background:#232b3cbc;z-index:10;display:flex;align-items:center;justify-content:center;padding:17px}.modal{background:#fffaf2;border:5px solid #edacb5;border-radius:25px;padding:23px;max-width:380px;width:100%;text-align:center;box-shadow:0 16px 50px #0004}.modal h2{margin:3px 0 12px}.modal p{line-height:1.5;font-size:14px}.modal input{width:100%;border:2px solid #ddb4ab;border-radius:11px;padding:12px;font:inherit;text-align:center}.primary{margin-top:12px;background:#d96f92;color:white;border:0;border-radius:14px;padding:13px 20px;font-weight:900;width:100%}.choices{display:flex;gap:9px;margin-top:12px}.choices button{flex:1;background:#e6efd8;border:2px solid #9aac8f;border-radius:13px;padding:12px;font-size:27px}.choices button.selected{border-color:#b34d74;background:#f9c7c3}
+.hidden{display:none!important}.help{font-size:12px!important;color:#656477}
+@keyframes eggwiggle{0%,100%{transform:translate(-50%,-43%) rotate(-3deg)}50%{transform:translate(-50%,-48%) rotate(3deg)}}#pet.egg{animation:eggwiggle .75s ease-in-out infinite}@keyframes bob{50%{transform:translate(-50%,-47%)}}@keyframes hop{40%{transform:translate(-50%,-66%)}}@keyframes sleep{50%{transform:translate(-50%,-40%) rotate(-3deg)}}@keyframes float{to{opacity:0;transform:translateY(-65px)}}@keyframes drift{to{transform:translateX(22px)}}
+@media(max-width:370px){body{padding:9px}.console{padding:28px 20px 32px}.screen{height:275px}.scene{height:185px}.hardbtn{width:52px;height:42px}.actions{gap:5px}}
+
+/* Mobile game cockpit v0.4 — controls always in the first viewport */
+html,body{height:100%;overscroll-behavior:none}
+body{height:100dvh;min-height:0;padding:7px max(7px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom));overflow:hidden;align-items:stretch;justify-content:center}
+.layout{width:min(100%,470px);height:100%;min-height:0;margin:auto;display:flex;flex-direction:column;gap:6px}
+.top{height:20px;min-height:20px;padding:0 7px}.top strong{font-size:11px}.top span{font-size:11px}
+.console{flex:1 1 39%;min-height:160px;padding:20px 18px 12px;border-width:4px;border-radius:35px 35px 28px 28px;box-shadow:inset 3px 3px 0 #ffffff6e,inset -5px -5px 0 #ad587b70,0 4px 12px #26345225;display:flex;flex-direction:column}
+.console:before{top:6px;font-size:9px}
+.bezel{min-height:0;flex:1;margin-top:1px;border-width:5px;border-radius:16px;padding:4px;display:flex;flex-direction:column}
+.screen{height:100%;min-height:0;display:flex;flex-direction:column}
+.screen-head{height:24px;min-height:24px;font-size:10px;padding:0 9px}
+.scene{flex:1;min-height:0;height:auto}
+#pet{width:min(36vw,130px);height:min(36vw,130px)}
+.screen-bottom{min-height:23px;padding:3px 9px;font-size:10px}
+.nameplate,.hardware{display:none}
+.dashboard{flex:0 1 auto;min-height:0;display:flex;flex-direction:column;padding:10px 12px;border-radius:16px;box-shadow:0 4px 12px #3e425020}
+.identity h1{font-size:16px}.identity p{font-size:10px;margin-top:1px}.tag{font-size:9px;padding:5px 7px}
+.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:8px 0}
+.stat{padding:6px;border-radius:9px;min-width:0}
+.stat label{font-size:9px;margin-bottom:4px;gap:3px;white-space:nowrap}
+.track{height:6px}
+.actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.action{min-height:52px;padding:6px 2px;border-radius:11px;font-size:10px;line-height:1.1}
+.action i{font-size:21px;margin:0 0 3px}
+.message{margin-top:7px;padding:7px 9px;min-height:29px;max-height:42px;overflow:hidden;font-size:10px;line-height:1.25}
+@media(prefers-reduced-motion:reduce){#pet,.cloud{animation:none!important}}.footer{min-height:19px;justify-content:space-evenly;align-items:center;padding:0 3px;gap:8px;font-size:9px}
+.footer>span{display:none}.footer button{font-size:10px;white-space:nowrap}
+.overlay{padding:12px;overflow:auto}.modal{max-height:calc(100dvh - 24px);overflow-y:auto;padding:15px}.modal h2{font-size:20px}.modal p{font-size:13px}
+@media(max-height:740px){.console{flex-basis:33%;min-height:135px;padding:18px 14px 9px}.screen-head{height:20px;min-height:20px}.screen-bottom{min-height:21px}.dashboard{padding:8px 10px}.stats{margin:6px 0}.stat{padding:5px}.action{min-height:46px;padding:4px 2px}.action i{font-size:18px}.message{margin-top:5px;padding:5px;min-height:25px}}
+@media(max-height:610px){.top{height:15px;min-height:15px}.console{min-height:112px;padding:15px 10px 6px}.bezel{border-width:3px}.screen-head{min-height:16px;height:16px}.screen-bottom{min-height:17px;font-size:9px}.stats{gap:3px;margin:4px 0}.stat{padding:3px}.stat label{font-size:8px}.action{min-height:39px;font-size:9px}.action i{font-size:16px}.message{max-height:24px;min-height:21px}.dashboard{padding:6px 8px}.identity p{display:none}.footer{min-height:15px}}
+@media(max-width:360px){.console{padding-left:11px;padding-right:11px}.stat label{font-size:8px}.tag{font-size:8px}.action{font-size:9px}}
+@media(min-width:650px) and (min-height:800px){.console{flex-basis:49%}#pet{width:150px;height:150px}}
+#pet.reaction-eat{animation:chew .23s ease-in-out infinite}#pet.reaction-play,#pet.reaction-hop{animation:boing .42s ease-in-out infinite}#pet.reaction-wash{animation:scrub .18s ease-in-out infinite}#pet.reaction-heal{animation:glow .6s ease-in-out infinite}#pet.reaction-sleep{animation:sleep 2s ease-in-out infinite}#pet.reaction-stretch{animation:stretch .75s ease-in-out infinite}@keyframes chew{50%{transform:translate(-50%,-42%) scale(1.06,.95)}}@keyframes boing{50%{transform:translate(-50%,-65%) rotate(8deg)}}@keyframes scrub{50%{transform:translate(-50%,-43%) rotate(-8deg)}}@keyframes glow{50%{filter:drop-shadow(0 0 12px #6ceab1)}}@keyframes stretch{50%{transform:translate(-50%,-40%) scale(1.14,.86)}}@media(prefers-reduced-motion:reduce){#pet[class*=reaction]{animation:none!important}}@media(max-width:650px){#pet{width:min(45vw,170px);height:min(45vw,170px)}.scene{display:flex;align-items:center;justify-content:center}}@media(max-height:610px){#pet{width:min(30vw,112px);height:min(30vw,112px)}}
+/* v0.9: redesigned handset, big readable central character */
+body{background:linear-gradient(145deg,#e9e6fa 0%,#ffdace 60%,#ffefd5 100%);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+.layout{max-width:440px;gap:8px}
+.top strong{font-size:12px;color:#60475f;letter-spacing:2px}
+.console{border:3px solid #e5a3af;border-radius:30px;background:linear-gradient(130deg,#ffdae2,#f6a7c8 55%,#d788b4);padding:18px 14px 9px;flex:1 1 auto;min-height:215px;box-shadow:inset 3px 3px 0 #fff9,0 5px 0 #c984a2,0 10px 18px #8a648333}
+.console:before{font-size:8px;top:5px;letter-spacing:3px}
+.bezel{border:5px solid #665669;background:#665669;padding:4px;margin-top:0;border-radius:20px;box-shadow:inset 0 2px 4px #312c39,0 3px 4px #d779a2}
+.screen{border-radius:13px;background:#d3efc1;box-shadow:inset 0 0 25px #5b87552a}
+.screen-head{background:#bed6ac;height:24px;min-height:24px;color:#506a46}
+.scene{background:linear-gradient(to bottom,#daefce 0%,#d0e9ba 72%,#afcf9f 72%,#b7d9a6 100%);position:relative;min-height:0;flex:1}
+.scene .cloud{font-size:20px;color:#74a87a;opacity:.7}
+.scene .cloud.a{top:15%;left:9%}.scene .cloud.b{top:10%;right:12%}
+.floor{bottom:9%;left:18%;width:64%;height:8%;background:#719a6f30}
+#pet{width:clamp(200px,70vw,294px)!important;height:clamp(200px,70vw,294px)!important;max-height:94%;max-width:90%;top:49%;filter:drop-shadow(0 4px 0 #69926740);image-rendering:pixelated}
+.screen-bottom{background:#bed6ac;font-size:10px;min-height:26px}
+.dashboard{border:2px solid #ffffffaa;box-shadow:0 4px 12px #755a7a24;background:#fffbf4;flex:0 0 auto;padding:10px 11px}
+.identity h1{font-size:19px;color:#514056}.identity p{font-size:11px}
+.stats{gap:5px;margin:8px 0}
+.stat{background:#f7f0e7}
+.stat label{font-size:10px}
+.actions{gap:6px}
+.action{background:#ffffff;min-height:53px;border-color:#ead6db;font-weight:800;color:#664c5f;box-shadow:0 2px 0 #ebd4d5}
+.action i{font-size:22px}.action:active{background:#ffe6ef}
+.message{background:#fff0de;color:#806079;font-size:11px}
+.footer button{color:#5d4b66;text-decoration:none;font-weight:650}
+@media(max-height:790px){.console{padding:16px 10px 7px;min-height:175px}.dashboard{padding:7px 9px}.stats{margin:5px 0}.stat{padding:4px}.action{min-height:44px;padding:3px 1px}.action i{font-size:18px}.message{min-height:23px;margin-top:5px;padding:5px}.top{min-height:16px;height:16px}.footer{min-height:16px}}
+@media(max-height:650px){#pet{width:clamp(150px,58vw,225px)!important;height:clamp(150px,58vw,225px)!important}.console{min-height:132px}.screen-head{min-height:17px;height:17px}.screen-bottom{min-height:18px}.identity p{display:none}.stats{margin:4px 0}.stat label{font-size:9px}.action{min-height:38px}.action i{font-size:16px}.dashboard{padding:6px}}
+
+/* v1.0: unmistakable full-size pet, viewport-stable mobile controls */
+.version-stamp{display:inline-block;background:#764c75;color:#fff;padding:3px 7px;border-radius:7px;letter-spacing:0;font-size:10px}
+.hero-pet{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font-family:'Apple Color Emoji','Segoe UI Emoji',sans-serif;font-size:clamp(124px,42vw,210px);line-height:1;filter:drop-shadow(0 12px 5px #516d3c40);cursor:pointer;user-select:none;animation:hero-idle 2.5s ease-in-out infinite;z-index:2}
+.hero-pet.pet-egg{animation:hero-egg .7s ease-in-out infinite}
+.hero-pet.pet-sleep{animation:hero-sleep 2.8s ease-in-out infinite}
+.hero-pet.reaction-play,.hero-pet.reaction-hop{animation:hero-bounce .38s ease-in-out infinite}
+.hero-pet.reaction-eat{animation:hero-eat .3s ease-in-out infinite}
+.hero-pet.reaction-wash{animation:hero-wash .22s ease-in-out infinite}
+.hero-pet.reaction-heal{animation:hero-heal .65s ease-in-out infinite}
+.hero-pet.reaction-stretch{animation:hero-stretch .85s ease-in-out infinite}
+@keyframes hero-idle{0%,100%{transform:translate(-50%,-50%) rotate(-2deg)}50%{transform:translate(-50%,-54%) rotate(2deg)}}
+@keyframes hero-egg{0%,100%{transform:translate(-50%,-50%) rotate(-8deg)}50%{transform:translate(-50%,-50%) rotate(8deg)}}
+@keyframes hero-sleep{50%{transform:translate(-50%,-45%) scale(.95)}}
+@keyframes hero-bounce{50%{transform:translate(-50%,-73%) rotate(10deg)}}
+@keyframes hero-eat{50%{transform:translate(-50%,-50%) scale(1.08,.90)}}
+@keyframes hero-wash{50%{transform:translate(-50%,-50%) rotate(9deg)}}
+@keyframes hero-heal{50%{filter:drop-shadow(0 0 24px #71f2a5)}}
+@keyframes hero-stretch{50%{transform:translate(-50%,-50%) scale(1.14,.88)}}
+.console{background:linear-gradient(130deg,#eac2ff,#bc96f0 55%,#8663c2);border-color:#a285d8}
+.console:before{content:'BICHO VIRTUAL • V1.3';color:#503676}
+.bezel{border-color:#5b5084;background:#5b5084}
+.scene{background:linear-gradient(#c9eeff 0%,#e7fbff 58%,#9bd88e 59%,#b2e493 100%)}
+.screen-head,.screen-bottom{background:#bde6ed;color:#3c6378}
+.dashboard{background:#fffdfc}
+.action{border-color:#decdf3}
+@media(max-height:720px){.hero-pet{font-size:clamp(105px,29vh,165px)}}
+@media(max-height:580px){.hero-pet{font-size:100px}.console{min-height:110px}}
+@media(prefers-reduced-motion:reduce){.hero-pet{animation:none!important}}
+
+/* v1.1 single-viewport sizing: final overrides, no scrolling for primary actions */
+:root{--pet-size:clamp(132px,23dvh,212px)}
+body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-inset-bottom));min-height:0;height:100dvh}
+.layout{height:100%;width:min(100%,440px);display:flex;flex-direction:column;gap:6px}
+.top{flex:0 0 23px;height:23px;min-height:23px}
+.console{flex:1 1 auto;min-height:155px;max-height:none;padding:17px 12px 9px}
+.bezel{flex:1 1 auto;min-height:0}
+.scene{flex:1 1 auto;min-height:0}
+.hero-pet{width:var(--pet-size);height:var(--pet-size);display:flex;align-items:center;justify-content:center;top:50%;font-size:calc(var(--pet-size) * .8);max-width:75%;max-height:90%}
+.dashboard{flex:0 0 auto;padding:9px 10px;gap:0;min-height:0}
+.identity h1{font-size:17px}.identity p{font-size:10px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:7px 0}
+.stat{padding:5px}.stat label{font-size:9px;gap:2px;white-space:nowrap}
+.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.action{min-height:49px;padding:5px 2px}.action i{font-size:20px}
+.message{min-height:27px;margin-top:7px;padding:6px;font-size:10px;max-height:34px}
+.footer{flex:0 0 19px;min-height:19px}
+@media(max-height:780px){:root{--pet-size:clamp(110px,22dvh,175px)}.top{flex-basis:18px;min-height:18px}.console{min-height:130px;padding:14px 9px 7px}.dashboard{padding:6px 8px}.stats{margin:5px 0}.stat{padding:4px}.action{min-height:42px;padding:3px 2px}.action i{font-size:17px}.message{margin-top:4px;min-height:22px;padding:4px}}
+@media(max-height:610px){:root{--pet-size:clamp(92px,19dvh,145px)}.console{min-height:98px}.stat label{font-size:8px}.action{min-height:36px}.action i{font-size:15px}.identity p{display:none}.screen-head{min-height:17px;height:17px}.screen-bottom{min-height:18px}}
+@media(prefers-reduced-motion:reduce){.hero-pet{animation:none!important}}
+.hero-pet img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 7px 2px #5d775b38)}.hero-pet{width:clamp(155px,28dvh,260px);height:clamp(155px,28dvh,260px);font-size:130px}.hero-pet img{transform:scale(1.08)}@media(max-height:700px){.hero-pet{width:clamp(120px,25dvh,205px);height:clamp(120px,25dvh,205px)}}.version-stamp{background:#3c8a87}.console{background:linear-gradient(135deg,#aee4d4,#81bddc 55%,#8a9be7)}.console:before{content:'BICHO VIRTUAL • V1.3';color:#315c77}</style>
+</head>
+<body>
+<main class="layout">
+<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V1.3</span> ✦</strong><span id="clock"></span></header>
+<section class="console" aria-label="Console de bichinho virtual">
+<div class="bezel"><div class="screen">
+<div class="screen-head"><span id="dayLabel">DIA 1</span><span id="weather">☀ ENSOLARADO</span></div>
+<div class="scene" id="scene"><span class="cloud a">✿</span><span class="cloud b">✦</span><div class="floor"></div><span id="heroPet" class="hero-pet" aria-label="Seu bichinho" role="img">🥚</span><canvas id="pet" width="64" height="64" aria-label="Desenho alternativo" style="display:none"></canvas></div>
+<div class="screen-bottom"><span id="status">♥ FELIZ</span><span class="tiny-pill" id="life">BEBÊ</span><span id="coins">★ 15</span></div>
+</div></div>
+<div class="nameplate">♡ LOVE YOUR LITTLE FRIEND ♡</div>
+<div class="hardware"><button class="hardbtn" id="prev" aria-label="Ação anterior">◀</button><button class="hardbtn" id="select" aria-label="Selecionar ação">●</button><button class="hardbtn" id="next" aria-label="Próxima ação">▶</button></div>
+</section>
+<section class="dashboard">
+<div class="identity"><div><h1 id="petName">Meu bichinho</h1><p id="petMeta">Seu novo melhor amigo</p></div><span class="tag" id="mood">😊 CONTENTE</span></div>
+<div class="stats" id="stats"></div>
+<div class="actions" id="actions">
+<button class="action" data-act="feed"><i>🍎</i>Alimentar</button><button class="action" data-act="play"><i>🎾</i>Brincar</button><button class="action" data-act="sleep"><i>🌙</i>Dormir</button><button class="action" data-act="clean"><i>🧼</i>Banho</button><button class="action" data-act="heal"><i>💊</i>Cuidar</button><button class="action" data-act="game"><i>🎮</i>Minijogo</button>
+</div><div id="message" class="message" role="status">Seu bichinho está esperando carinho!</div>
+</section>
+<footer class="footer"><span>Salvo automaticamente neste aparelho</span><button id="soundBtn" aria-label="Alternar som">🔊 Som</button><button id="achBtn">Conquistas</button><button id="helpBtn">Como jogar</button><button id="resetBtn">Recomeçar</button></footer>
+</main>
+<div class="overlay hidden" id="overlay"><section class="modal" id="modal" aria-live="polite"></section></div>
+<script>
+(()=>{'use strict';
+const KEY='bichovirtual_save_v1',TICK=18000,MAX=100;
+const $=id=>document.getElementById(id),clamp=n=>Math.max(0,Math.min(MAX,n));
+const species={cat:{symbol:'🐱',label:'Gatinho',color:'#f0a66b',ear:true},bunny:{symbol:'🐰',label:'Coelhinho',color:'#e9d8ca',ear:true},bear:{symbol:'🐻',label:'Ursinho',color:'#bf9c75',ear:false}};
+let pet=null,selected='cat',actionIndex=0,timer=null,animationFrame=0,animUntil=0,lastIdle=0,soundOn=localStorage.getItem('bichovirtual_sound')!=='off',audioCtx=null;const foods=[{name:'Maçã',emoji:'🍎',cost:0,full:16,joy:2},{name:'Ração',emoji:'🥣',cost:2,full:32,joy:0},{name:'Bolo',emoji:'🍰',cost:5,full:22,joy:18},{name:'Banquete',emoji:'🍱',cost:9,full:52,joy:12}];const awards=[{id:'start',label:'🥚 Primeira amizade',ok:p=>!!p.born},{id:'plays',label:'🎾 Companheiro de brincadeiras',ok:p=>p.plays>=10},{id:'child',label:'🌱 Crescer é uma aventura',ok:p=>age()>=3},{id:'adult',label:'⭐ Amigo para toda vida',ok:p=>age()>=12},{id:'rich',label:'🪙 Colecionador',ok:p=>p.coins>=50},{id:'clean',label:'🫧 Dia de spa',ok:p=>p.baths>=5}];
+const actions=['feed','play','sleep','clean','heal','game'];
+function message(s){$('message').textContent=s}function beep(freq=600,duration=.09){if(!soundOn)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;audioCtx=audioCtx||new AC();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(.035,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+function save(){if(pet)localStorage.setItem(KEY,JSON.stringify(pet))}
+function initial(name,type){return{name:name||'Pipoca',type,born:Date.now(),updated:Date.now(),hunger:78,joy:85,energy:86,clean:90,health:100,coins:15,asleep:false,poops:0,plays:0,baths:0,stage:0,phaseVersion:2,dead:false}}
+function age(){return Math.floor((Date.now()-pet.born)/60000)}
+function stage(){const t=(Date.now()-pet.born)/60000;if(pet.phaseVersion!==2)return t<3?'BEBÊ':t<12?'JOVEM':'ADULTO';return t<2?'OVO':t<4?'CHOCANDO':t<12?'BEBÊ':t<25?'JOVEM':'ADULTO'}
+function eggStage(){return stage()==='OVO'||stage()==='CHOCANDO'}
+function evolve(){if(!pet||pet.dead)return;const phase=stage();if(!pet.lastPhase){pet.lastPhase=phase;save();return}if(phase===pet.lastPhase)return;pet.lastPhase=phase;if(phase==='CHOCANDO'){message('🥚 O ovo começou a rachar!');sparkle('✨');beep(750,.12)}else if(phase==='BEBÊ'){message('🎉 NASCEU! '+pet.name+' saiu do ovo!');sparkle('🌟');beep(900,.23)}else if(phase==='JOVEM'){message('🌱 '+pet.name+' cresceu! Já é jovem!');sparkle('⭐');beep(860,.2)}else if(phase==='ADULTO'){message('👑 '+pet.name+' virou adulto!');sparkle('👑');beep(980,.25)}save()}
+function updateTime(){if(!pet||pet.dead)return;let now=Date.now(),steps=Math.min(1440,Math.floor((now-pet.updated)/TICK));if(steps<=0)return;pet.updated+=steps*TICK;pet.hunger=clamp(pet.hunger-steps*.8);pet.clean=clamp(pet.clean-steps*.45);pet.energy=clamp(pet.energy+(pet.asleep?steps*2.8:-steps*.55));pet.joy=clamp(pet.joy-steps*.5);if(pet.hunger<20||pet.clean<18||pet.energy<12)pet.health=clamp(pet.health-steps*.5);else if(pet.health<100)pet.health=clamp(pet.health+steps*.13);pet.poopCounter=(pet.poopCounter||0)+steps;while(pet.poopCounter>=35){pet.poopCounter-=35;pet.poops=Math.min(4,pet.poops+1)}if(pet.poops>=3)pet.clean=clamp(pet.clean-steps*.45);if(pet.asleep&&pet.energy>=99){pet.asleep=false;message('Seu amigo acordou descansado!')}if(pet.health<=0){pet.dead=true;pet.asleep=false;message('Seu bichinho precisa de um novo começo 💔')}save()}
+const atlases={};for(const speciesId of ['cat','bunny','bear']){const img=new Image();img.src='assets/'+speciesId+'-atlas.png?v=8';atlases[speciesId]=img}
+function drawAtlas(ctx){const img=atlases[pet.type];if(!img||!img.complete||!img.naturalWidth)return false;const phase=stage();let cell=phase==='OVO'?0:phase==='CHOCANDO'?1:phase==='BEBÊ'?2:phase==='JOVEM'?4:6;const activity=pet.animation||'';if(pet.asleep||activity==='sleep')cell=7;else if(activity==='play'||activity==='hop'||activity==='stretch')cell=phase==='BEBÊ'?3:5;else if(activity==='eat'||activity==='wash'||activity==='heal')cell=phase==='BEBÊ'?3:cell===4?5:3;else if(pet.joy>80&&Date.now()%7200<1100&&!eggStage())cell=phase==='ADULTO'?6:3;const x=cell%4*24,y=Math.floor(cell/4)*24;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(img,x,y,24,24,4,3,56,57);ctx.restore();return true}
+// The old 24px atlases are intentionally disabled: their reduced resolution
+// obscures distinguishing features. The full-size artwork must be exported
+// at adequate resolution before we enable image atlases again.
+function draw(){
+ if(!pet)return;
+ const c=$('pet'),ctx=c.getContext('2d'),phase=stage(),t=Date.now();
+ ctx.clearRect(0,0,64,64);ctx.imageSmoothingEnabled=false;
+ const p=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x,y,w,h)};
+ const oval=(x,y,rx,ry,col)=>{ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()};
+ const colors={cat:['#f2aa69','#a66753','#fff3dc','#4d4149','#e78fa4'],bunny:['#e8cdb4','#ab888a','#fff9ef','#6e5665','#efa5b8'],bear:['#bf8057','#855439','#f9dbaa','#57403b','#eb9c9a']}[pet.type]||['#f2aa69','#a66753','#fff3dc','#4d4149','#e78fa4'];
+ const [fur,shade,cream,ink,pink]=colors;const frame=Math.floor(t/230)%4,action=pet.animation||'idle';
+ if(pet.dead){p(14,52,36,3,shade);p(27,41,10,12,ink);return}
+ if(phase==='OVO'||phase==='CHOCANDO'){
+  oval(32,34,20,25,ink);oval(32,33,18,23,cream);oval(23,27,6,9,fur);oval(41,43,6,7,fur);oval(32,42,5,5,pink);p(24,17,9,3,'#fff');
+  if(phase==='CHOCANDO'){p(29,10,4,11,ink);p(25,21,7,3,ink);p(25,24,3,7,ink);p(28,30,8,3,ink);p(34,33,3,9,ink);oval(37,23,4,4,fur)}
+  return;
+ }
+ const scale=phase==='BEBÊ'?.92:phase==='JOVEM'?.97:1;
+ ctx.save();ctx.translate(32,55);ctx.scale(scale,scale);ctx.translate(-32,-55);if(action==='play'&&frame%2===0){ctx.translate(0,-3)}if(action==='stretch'&&frame%2===0){ctx.translate(0,3);ctx.scale(1.1,.91)}
+ if(pet.type==='cat'){
+  p(9,12,17,24,ink);p(38,12,17,24,ink);p(13,16,10,14,pink);p(41,16,10,14,pink);
+  oval(49,48,10,10,shade);oval(51,44,5,7,fur);
+ }else if(pet.type==='bunny'){
+  oval(18,18,9,19,ink);oval(46,18,9,19,ink);oval(18,18,6,16,pink);oval(46,18,6,16,pink);
+  oval(52,48,6,7,cream);
+ }else{
+  oval(16,22,10,10,ink);oval(48,22,10,10,ink);oval(16,22,6,6,pink);oval(48,22,6,6,pink);
+ }
+ oval(32,45,21,17,ink);oval(32,44,19,15,fur);oval(32,30,24,21,ink);oval(32,29,22,19,fur);
+ if(pet.type==='cat'){oval(20,27,9,12,cream);oval(43,33,10,12,shade);p(8,37,8,2,ink);p(48,37,8,2,ink)}
+ if(pet.type==='bunny'){oval(31,40,14,11,cream);oval(20,26,9,9,cream)}
+ if(pet.type==='bear'){oval(31,41,13,10,cream);oval(30,36,12,9,cream)}
+ oval(22,52,9,6,ink);oval(42,52,9,6,ink);oval(22,51,7,4,fur);oval(42,51,7,4,fur);
+ const closing=pet.asleep||(t%4800<170)||action==='sleep'||(action==='wash'&&frame===2);
+ if(closing){p(18,35,11,2,ink);p(36,35,11,2,ink)}
+ else{oval(23,35,5,7,ink);oval(41,35,5,7,ink);p(24,32,2,3,'#fff');p(42,32,2,3,'#fff')}
+ oval(16,42,5,3,pink);oval(48,42,5,3,pink);oval(32,43,4,3,pink);
+ if(action==='eat'){oval(32,49,7,frame%2===0?3:6,ink);oval(32,49,4,frame%2===0?2:4,pink)}
+ else if(pet.animation==='play'||pet.joy>65){p(27,48,10,2,ink)}
+ else{p(29,49,6,2,ink)}
+ if(action==='wash'){p(frame%2?9:14,23,5,5,'#9be9ed');p(frame%2?48:43,21,6,6,'#a7f3f5');p(35,12+(frame%3)*2,4,4,'#fff')}
+ if(action==='heal'){p(29,18-(frame%2)*3,6,3,'#ef667a');p(30,16-(frame%2)*3,4,8,'#ef667a')}
+ if(action==='eat'){p(49-(frame%3)*3,47+(frame%2),8,7,'#e94f5f');p(52-(frame%3)*3,44,3,4,'#78b95b')}
+ if(action==='play'){p(48+(frame%3)*2,49+(frame%2)*3,9,9,'#ed7993');p(51+(frame%3)*2,49,2,8,'#ffe4a7')}
+ if(pet.animation==='stretch'){p(10,46,12,6,fur);p(45,45,12,6,fur)}
+ if(pet.health<25){p(27,23,10,3,'#8ab08e')}
+ if(phase==='ADULTO'){p(28,18,8,3,cream);p(30,15,4,4,shade)}if(action==='idle'&&!pet.asleep&&frame===3){p(9,45,6,2,cream)}if(action==='hop'){p(19,54,8,3,pink);p(37,54,8,3,pink)}
+ ctx.restore();
+}
+function render(){if(!pet)return;const currentStage=stage();const face=currentStage==='OVO'?'🥚':currentStage==='CHOCANDO'?'🐣':'<img draggable="false" src="assets/'+pet.type+'-character.svg?v=13" alt="'+species[pet.type].label+'" />';const hero=$('heroPet');hero.style.fontSize='calc(var(--pet-size) * '+(eggStage()?'.73':'.94')+')';hero.style.scale=eggStage()?'1':currentStage==='BEBÊ'?'.82':currentStage==='JOVEM'?'.93':'1';$('heroPet').innerHTML=pet.dead?'💫':face;$('heroPet').classList.toggle('pet-egg',eggStage());$('heroPet').classList.toggle('pet-sleep',pet.asleep);const fields=[['🍎 Saciedade','hunger'],['😊 Felicidade','joy'],['⚡ Energia','energy'],['🧼 Higiene','clean'],['❤️ Saúde','health']];$('stats').innerHTML=fields.map(([t,k])=>'<div class="stat"><label><span>'+t+'</span><span>'+Math.round(pet[k])+'%</span></label><div class="track"><div class="fill '+(pet[k]<30?'low':'')+'" style="width:'+pet[k]+'%"></div></div></div>').join('')+'<div class="stat"><label><span>🪙 Moedas</span><span>'+pet.coins+'</span></label><div class="track"><div class="fill" style="width:'+Math.min(100,pet.coins)+'%"></div></div></div>';
+let droppings=$('scene').querySelector('.spark');if(!droppings){droppings=document.createElement('span');droppings.className='spark';$('scene').appendChild(droppings)}droppings.textContent=eggStage()?'':'💩'.repeat(pet.poops||0);$('petName').textContent=pet.name;$('petMeta').textContent=species[pet.type].label+' • '+stage()+' • '+age()+' min';$('dayLabel').textContent='DIA '+(1+Math.floor(age()/12));$('life').textContent=stage();$('coins').textContent='★ '+pet.coins;
+let mood=pet.dead?'💔 ADEUS':eggStage()?(stage()==='OVO'?'🥚 AQUECENDO':'✨ RACHANDO'):pet.asleep?'💤 DORMINDO':pet.health<25?'🤒 DOENTE':pet.hunger<25?'🍽 COM FOME':pet.clean<25?'🧼 SUJINHO':pet.joy<25?'😢 TRISTE':'😊 CONTENTE';$('mood').textContent=mood;$('status').textContent=mood; $('pet').classList.toggle('sleep',pet.asleep);$('pet').classList.toggle('egg',eggStage());$('pet').classList.toggle('sick',pet.health<30);
+$('weather').textContent=new Date().getHours()>18||new Date().getHours()<6?'☾ NOITE':'☀ DIA';
+$('actions').querySelectorAll('button').forEach((el,i)=>{el.style.borderColor=i===actionIndex?'#d87592':'#e9dfd8';el.disabled=pet.dead});draw();
+}
+function react(kind,duration=1250){if(!pet)return;pet.animation=kind;animUntil=Date.now()+duration;const el=$('heroPet');el.classList.remove('reaction-eat','reaction-play','reaction-wash','reaction-heal','reaction-sleep','reaction-stretch','reaction-hop');void el.offsetWidth;el.classList.add('reaction-'+kind);if(kind==='sleep')sparkle('💤');if(kind==='wash')sparkle('🫧');if(kind==='heal')sparkle('💚');if(kind==='eat')sparkle('🍎');if(kind==='play')sparkle('💞')}
+function sparkle(e){let node=document.createElement('span');node.className='effect';node.textContent=e;$('scene').appendChild(node);setTimeout(()=>node.remove(),1100)}
+function act(type){if(!pet||pet.dead)return;updateTime();if(eggStage()){if(type==='feed'||type==='play'){react('hop',900);pet.joy=clamp(pet.joy+4);pet.health=clamp(pet.health+3);sparkle('💗');beep(530);message(type==='feed'?'Você aqueceu o ovo com carinho!':'O ovo balançou ao ouvir você!');save();render()}else{beep(260,.1);message('🥚 Espere o nascimento para usar essa ação. Por enquanto, toque no ovo!')}return}if(type==='game'){minigame();return}if(type==='feed'){foodMenu();return}beep(580);
+
+if(type==='play'){if(pet.energy<10){message('Está muito cansado para brincar.');return}pet.joy=clamp(pet.joy+23);pet.energy=clamp(pet.energy-12);pet.hunger=clamp(pet.hunger-6);pet.plays++;react('play',1300);sparkle('💗');$('pet').classList.add('hop');setTimeout(()=>$('pet').classList.remove('hop'),950);message(pet.name+' adorou brincar com você!')}
+if(type==='sleep'){pet.asleep=!pet.asleep;react('sleep',950);if(pet.asleep){sparkle('💤');message('Boa noite! A energia se recupera com o tempo.')}else message('Bom dia! '+pet.name+' acordou!')}
+if(type==='clean'){pet.clean=clamp(pet.clean+42);pet.poops=0;pet.baths=(pet.baths||0)+1;react('wash',1800);sparkle('🫧');message('Banho tomado! Cheirinho de limpeza!')}
+if(type==='heal'){if(pet.coins<4){message('São necessárias 4 moedas para o remédio.');return}pet.coins-=4;pet.health=clamp(pet.health+35);react('heal',1350);sparkle('❤️');message('Cuidado recebido! A saúde melhorou.')}
+save();render()}
+function foodMenu(){open('<h2>🍽 Hora de comer!</h2><p>Escolha a refeição do seu amigo.</p><div class="food-grid">'+foods.map((f,i)=>'<button data-food="'+i+'"><span>'+f.emoji+'</span>'+f.name+'<br>★ '+f.cost+' moedas</button>').join('')+'</div><button class="primary" style="background:#9295a4" id="cancelFood">VOLTAR</button>');$('cancelFood').onclick=close;document.querySelectorAll('[data-food]').forEach(b=>b.onclick=()=>{const food=foods[Number(b.dataset.food)];if(pet.coins<food.cost){message('Você precisa de '+food.cost+' moedas para comprar '+food.name+'.');beep(180,.2);close();return}pet.coins-=food.cost;pet.hunger=clamp(pet.hunger+food.full);pet.joy=clamp(pet.joy+food.joy);pet.clean=clamp(pet.clean-4);react('eat',1450);sparkle(food.emoji);beep(840);message(pet.name+' adorou '+food.name+'!');save();close();render()})}
+function achievements(){open('<h2>🏆 Conquistas</h2><p>Complete desafios enquanto seu amigo cresce.</p>'+awards.map(a=>'<div class="achievement '+(a.ok(pet)?'':'locked')+'">'+(a.ok(pet)?'✅':'🔒')+' '+a.label+'</div>').join('')+'<button class="primary" id="achClose">VOLTAR</button>');$('achClose').onclick=close}
+function minigame(){open('<h2>🎲 Adivinhe o presente!</h2><p>Escolha uma das caixas. Você pode ganhar até 8 moedas!</p><div class="choices"><button data-guess="0">🎁</button><button data-guess="1">🎁</button><button data-guess="2">🎁</button></div><p class="help">Brinque para ganhar moedas e cuidar do seu amigo.</p>');const winner=Math.floor(Math.random()*3);document.querySelectorAll('[data-guess]').forEach(b=>b.onclick=()=>{let won=Number(b.dataset.guess)===winner;beep(won?900:330,.13);pet.coins+=won?8:2;pet.joy=clamp(pet.joy+10);react('play',1100);save();close();sparkle(won?'🌟':'💗');message(won?'Acertou! +8 moedas!':'Quase! +2 moedas pela tentativa.');render()})}
+function open(html){$('modal').innerHTML=html;$('overlay').classList.remove('hidden')}
+function close(){$('overlay').classList.add('hidden')}
+function welcome(){open('<h2>🥚 Um novo amigo!</h2><p>Escolha seu bichinho, dê um nome e cuide dele todos os dias. Ele começa no ovo, choca e cresce visualmente!</p><div class="choices" id="types">'+Object.entries(species).map(([k,v])=>'<button data-type="'+k+'" class="'+(k===selected?'selected':'')+'" title="'+v.label+'">'+v.symbol+'</button>').join('')+'</div><p><input id="nickname" maxlength="18" placeholder="Nome do bichinho" value="Pipoca" aria-label="Nome do bichinho"></p><button class="primary" id="begin">ADOTAR MEU BICHINHO ♥</button>');document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{selected=b.dataset.type;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('selected',x===b))});$('begin').onclick=()=>{pet=initial($('nickname').value.trim().slice(0,18),selected);save();close();message('🥚 Seu ovo chegou! Toque nele e acompanhe seu nascimento.');render()}}
+function help(){open('<h2>📖 Como jogar</h2><p>Cuide do seu bichinho com os seis botões. Alimente quando estiver com fome, brinque para aumentar a felicidade, dê banho e deixe dormir para recuperar energia.</p><p>O tempo passa automaticamente, mesmo com o jogo fechado. O ovo racha após 2 minutos, nasce depois de 4 minutos e evolui para bebê, jovem e adulto. Cada fase muda de aparência. No minijogo, ganhe moedas para comprar remédios.</p><p class="help">Os botões da console ◀ ● ▶ selecionam e executam as ações. O progresso fica salvo neste navegador.</p><button class="primary" id="ok">ENTENDI!</button>');$('ok').onclick=close}
+function reset(){open('<h2>Recomeçar aventura?</h2><p>Isso apaga o bichinho atual e todo o progresso salvo neste navegador.</p><button class="primary" id="yes">SIM, RECOMEÇAR</button><button class="primary" style="background:#8c91a4" id="no">CANCELAR</button>');$('yes').onclick=()=>{localStorage.removeItem(KEY);pet=null;welcome()};$('no').onclick=close}
+try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&species[saved.type]&&typeof saved.born==='number'){pet={...initial(saved.name,saved.type),...saved};if(!('phaseVersion' in saved))pet.phaseVersion=1;updateTime()}}catch(e){console.warn('Save inválido',e)}
+$('actions').addEventListener('click',e=>{const btn=e.target.closest('[data-act]');if(btn){actionIndex=actions.indexOf(btn.dataset.act);act(btn.dataset.act)}});
+$('prev').onclick=()=>{actionIndex=(actionIndex+5)%6;render();message('Selecionado: '+$('actions').children[actionIndex].innerText)};
+$('next').onclick=()=>{actionIndex=(actionIndex+1)%6;render();message('Selecionado: '+$('actions').children[actionIndex].innerText)};
+$('select').onclick=()=>act(actions[actionIndex]);$('pet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('heroPet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('helpBtn').onclick=help;$('resetBtn').onclick=reset;$('achBtn').onclick=()=>{if(pet)achievements()};$('soundBtn').onclick=()=>{soundOn=!soundOn;localStorage.setItem('bichovirtual_sound',soundOn?'on':'off');$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';if(soundOn)beep(700)};$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';
+function animatePet(){if(pet&&!pet.dead){const time=Date.now(),alive=!pet.asleep&&!eggStage();if(animUntil&&time>animUntil){pet.animation='';animUntil=0;$('pet').className=pet.asleep?'sleep':eggStage()?'egg':''}if(alive&&!animUntil&&time-lastIdle>6500){lastIdle=time;const roll=Math.random();if(roll<.45)react('stretch',1100);else if(roll<.8)react('hop',1050);else if(roll<.93){pet.coins+=2;save();sparkle('⭐ +2');message(pet.name+' encontrou duas moedas!')}else message(pet.name+' está olhando as nuvens ☁')}const drift=alive?Math.sin(time/1400)*Math.min(16,Math.max(5,$('scene').clientWidth*.035)):0;$('heroPet').style.marginLeft=drift+'px'}animationFrame=requestAnimationFrame(animatePet)}
+function heartbeat(){let now=new Date();$('clock').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});if(pet){updateTime();evolve();render()}}
+heartbeat();if(!pet)welcome();animationFrame=requestAnimationFrame(animatePet);timer=setInterval(heartbeat,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)heartbeat()});
+})();
+</script></body></html>
