@@ -114,7 +114,7 @@ body{background:linear-gradient(145deg,#e9e6fa 0%,#ffdace 60%,#ffefd5 100%);font
 @keyframes hero-heal{50%{filter:drop-shadow(0 0 24px #71f2a5)}}
 @keyframes hero-stretch{50%{transform:translate(-50%,-50%) scale(1.14,.88)}}
 .console{background:linear-gradient(130deg,#eac2ff,#bc96f0 55%,#8663c2);border-color:#a285d8}
-.console:before{content:'PIXEL PET • V2.0';color:#503676}
+.console:before{content:'PIXEL PET • V2.1';color:#503676}
 .bezel{border-color:#5b5084;background:#5b5084}
 .scene{background:linear-gradient(#c9eeff 0%,#e7fbff 58%,#9bd88e 59%,#b2e493 100%)}
 .screen-head,.screen-bottom{background:#bde6ed;color:#3c6378}
@@ -150,15 +150,15 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 #pet{display:block!important;position:absolute;left:50%;top:50%;width:clamp(170px,29dvh,265px)!important;height:clamp(170px,29dvh,265px)!important;max-height:87%;max-width:85%;image-rendering:pixelated;z-index:3;object-fit:contain;filter:drop-shadow(0 7px 2px #64816044);background:none}
 .hero-pet{z-index:3}
 @media(max-height:700px){#pet{width:clamp(125px,25dvh,190px)!important;height:clamp(125px,25dvh,190px)!important}}
-</style>
+.scene{background:linear-gradient(#bde9f4 0 48%,#8bc78a 48% 54%,#a5d38b 54% 100%)}.scene:before{content:"";position:absolute;left:0;right:0;top:46%;height:5%;background:linear-gradient(90deg,#84b89a,#d6ebaa,#84b89a);opacity:.8}.scene:after{content:"";position:absolute;left:0;right:0;bottom:0;height:21%;background:repeating-linear-gradient(100deg,transparent 0 17px,#7aa96712 17px 21px);pointer-events:none}.pet-shadow{position:absolute;z-index:1;left:50%;top:76%;width:29%;height:4%;border-radius:50%;background:#496d4855;filter:blur(5px);transform:translateX(-50%);transition:transform .2s,opacity .2s}.scene-prop{position:absolute;top:70%;left:59%;z-index:4;font-size:26px;transform:translate(-50%,-50%);pointer-events:none}.floor{display:none}#pet{top:60%!important;filter:drop-shadow(0 3px 1px #526c4e44)}.hero-pet{top:60%!important}.cloud{opacity:.55}.version-stamp{background:#387f78}</style>
 </head>
 <body>
 <main class="layout">
-<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V2.0</span> ✦</strong><span id="clock"></span></header>
+<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V2.1</span> ✦</strong><span id="clock"></span></header>
 <section class="console" aria-label="Console de bichinho virtual">
 <div class="bezel"><div class="screen">
 <div class="screen-head"><span id="dayLabel">DIA 1</span><span id="weather">☀ ENSOLARADO</span></div>
-<div class="scene" id="scene"><span class="cloud a">✿</span><span class="cloud b">✦</span><div class="floor"></div><span id="heroPet" class="hero-pet" aria-label="Seu bichinho" role="img">🥚</span><canvas id="pet" width="64" height="64" aria-label="Desenho alternativo" style="display:none"></canvas></div>
+<div class="scene" id="scene"><span class="cloud a">✿</span><span class="cloud b">✦</span><div class="floor"></div><div id="petShadow" class="pet-shadow"></div><div id="sceneProp" class="scene-prop"></div><span id="heroPet" class="hero-pet" aria-label="Seu bichinho" role="img">🥚</span><canvas id="pet" width="64" height="64" aria-label="Desenho alternativo" style="display:none"></canvas></div>
 <div class="screen-bottom"><span id="status">♥ FELIZ</span><span class="tiny-pill" id="life">BEBÊ</span><span id="coins">★ 15</span></div>
 </div></div>
 <div class="nameplate">♡ LOVE YOUR LITTLE FRIEND ♡</div>
@@ -268,7 +268,7 @@ $('actions').addEventListener('click',e=>{const btn=e.target.closest('[data-act]
 $('prev').onclick=()=>{actionIndex=(actionIndex+5)%6;render();message('Selecionado: '+$('actions').children[actionIndex].innerText)};
 $('next').onclick=()=>{actionIndex=(actionIndex+1)%6;render();message('Selecionado: '+$('actions').children[actionIndex].innerText)};
 $('select').onclick=()=>act(actions[actionIndex]);$('pet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('heroPet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('helpBtn').onclick=help;$('resetBtn').onclick=reset;$('achBtn').onclick=()=>{if(pet)achievements()};$('soundBtn').onclick=()=>{soundOn=!soundOn;localStorage.setItem('bichovirtual_sound',soundOn?'on':'off');$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';if(soundOn)beep(700)};$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';
-function animatePet(){if(pet&&!pet.dead){const time=Date.now(),alive=!pet.asleep&&!eggStage();if(animUntil&&time>animUntil){pet.animation='';animUntil=0;$('pet').className=pet.asleep?'sleep':eggStage()?'egg':''}if(alive&&!animUntil&&time-lastIdle>6500){lastIdle=time;const roll=Math.random();if(roll<.45)react('stretch',1100);else if(roll<.8)react('hop',1050);else if(roll<.93){pet.coins+=2;save();sparkle('⭐ +2');message(pet.name+' encontrou duas moedas!')}else message(pet.name+' está olhando as nuvens ☁')}const drift=alive?Math.sin(time/1400)*Math.min(16,Math.max(5,$('scene').clientWidth*.035)):0;$('heroPet').style.marginLeft=drift+'px';$('pet').style.marginLeft=drift+'px'}animationFrame=requestAnimationFrame(animatePet)}
+function animatePet(){if(pet&&!pet.dead){const time=Date.now(),alive=!pet.asleep&&!eggStage();if(animUntil&&time>animUntil){pet.animation='';animUntil=0;$('pet').className=pet.asleep?'sleep':eggStage()?'egg':''}if(alive&&!animUntil&&time-lastIdle>6500){lastIdle=time;const roll=Math.random();if(roll<.45)react('stretch',1100);else if(roll<.8)react('hop',1050);else if(roll<.93){pet.coins+=2;save();sparkle('⭐ +2');message(pet.name+' encontrou duas moedas!')}else message(pet.name+' está olhando as nuvens ☁')}const drift=alive?Math.sin(time/1400)*Math.min(9,Math.max(3,$('scene').clientWidth*.02)):0;const shadow=$('petShadow');shadow.style.transform='translateX(-50%) scale('+(pet.animation==='play'||pet.animation==='hop'?.76:1)+')';shadow.style.opacity=(pet.animation==='play'||pet.animation==='hop'?.24:.48);const prop=$('sceneProp');const act=pet.animation||'';const propVal=act==='eat'?'🥣':act==='play'?'🧶':act==='wash'?'🫧':act==='heal'?'💚':pet.asleep?'💤':'';if(prop.dataset.value!==propVal){prop.dataset.value=propVal;prop.textContent=propVal}$('heroPet').style.marginLeft=drift+'px';$('pet').style.marginLeft=drift+'px'}animationFrame=requestAnimationFrame(animatePet)}
 function heartbeat(){let now=new Date();$('clock').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});if(pet){updateTime();evolve();render()}}
 heartbeat();if(!pet)welcome();animationFrame=requestAnimationFrame(animatePet);timer=setInterval(heartbeat,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)heartbeat()});
 })();
