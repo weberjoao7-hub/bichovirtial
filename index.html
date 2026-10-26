@@ -197,57 +197,7 @@ function stage(){const t=(Date.now()-pet.born)/60000;if(pet.phaseVersion!==2)ret
 function eggStage(){return stage()==='OVO'||stage()==='CHOCANDO'}
 function evolve(){if(!pet||pet.dead)return;const phase=stage();if(!pet.lastPhase){pet.lastPhase=phase;save();return}if(phase===pet.lastPhase)return;pet.lastPhase=phase;if(phase==='CHOCANDO'){message('🥚 O ovo começou a rachar!');sparkle('✨');beep(750,.12)}else if(phase==='BEBÊ'){message('🎉 NASCEU! '+pet.name+' saiu do ovo!');sparkle('🌟');beep(900,.23)}else if(phase==='JOVEM'){message('🌱 '+pet.name+' cresceu! Já é jovem!');sparkle('⭐');beep(860,.2)}else if(phase==='ADULTO'){message('👑 '+pet.name+' virou adulto!');sparkle('👑');beep(980,.25)}save()}
 function updateTime(){if(!pet||pet.dead)return;let now=Date.now(),steps=Math.min(288,Math.floor((now-pet.updated)/TICK));if(steps<=0)return;pet.updated=now;pet.hunger=clamp(pet.hunger-steps*.8);pet.clean=clamp(pet.clean-steps*.45);pet.energy=clamp(pet.energy+(pet.asleep?steps*2.8:-steps*.55));pet.joy=clamp(pet.joy-steps*.5);if(pet.hunger<20||pet.clean<18||pet.energy<12)pet.health=clamp(pet.health-steps*.18);else if(pet.health<100)pet.health=clamp(pet.health+steps*.1);pet.poopCounter=(pet.poopCounter||0)+steps;while(pet.poopCounter>=35){pet.poopCounter-=35;pet.poops=Math.min(4,pet.poops+1)}if(pet.poops>=3)pet.clean=clamp(pet.clean-steps*.45);if(pet.asleep&&pet.energy>=99){pet.asleep=false;message('Seu amigo acordou descansado!')}if(pet.health<=0){pet.dead=true;pet.asleep=false;message('Seu bichinho precisa de um novo começo 💔')}save()}
-const atlases={};for(const speciesId of ['cat','bunny','bear']){const img=new Image();img.src='assets/'+speciesId+'-atlas.png?v=20';atlases[speciesId]=img}
-function drawAtlas(ctx){const img=atlases[pet.type];if(!img||!img.complete||!img.naturalWidth)return false;const phase=stage();let cell=phase==='OVO'?0:phase==='CHOCANDO'?1:phase==='BEBÊ'?2:phase==='JOVEM'?4:6;const activity=pet.animation||'';if(pet.asleep||activity==='sleep')cell=7;else if(activity==='play'||activity==='hop'||activity==='stretch')cell=phase==='BEBÊ'?3:5;else if(activity==='eat'||activity==='wash'||activity==='heal')cell=phase==='BEBÊ'?3:cell===4?5:3;else if(pet.joy>80&&Date.now()%7200<1100&&!eggStage())cell=phase==='ADULTO'?6:3;const x=cell%4*24,y=Math.floor(cell/4)*24;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(img,x,y,24,24,0,0,64,64);ctx.restore();return true}
-// The old 24px atlases are intentionally disabled: their reduced resolution
-// obscures distinguishing features. The full-size artwork must be exported
-// at adequate resolution before we enable image atlases again.
-function draw(){
- if(!pet)return;
- const c=$('pet'),ctx=c.getContext('2d'),phase=stage(),t=Date.now();
- ctx.clearRect(0,0,64,64);ctx.imageSmoothingEnabled=false;if(!eggStage()&&!pet.dead&&drawAtlas(ctx))return;
- const p=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x,y,w,h)};
- const oval=(x,y,rx,ry,col)=>{ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()};
- const colors={cat:['#f2aa69','#a66753','#fff3dc','#4d4149','#e78fa4'],bunny:['#e8cdb4','#ab888a','#fff9ef','#6e5665','#efa5b8'],bear:['#bf8057','#855439','#f9dbaa','#57403b','#eb9c9a']}[pet.type]||['#f2aa69','#a66753','#fff3dc','#4d4149','#e78fa4'];
- const [fur,shade,cream,ink,pink]=colors;const frame=Math.floor(t/230)%4,action=pet.animation||'idle';
- if(pet.dead){p(14,52,36,3,shade);p(27,41,10,12,ink);return}
- if(phase==='OVO'||phase==='CHOCANDO'){
-  oval(32,34,20,25,ink);oval(32,33,18,23,cream);oval(23,27,6,9,fur);oval(41,43,6,7,fur);oval(32,42,5,5,pink);p(24,17,9,3,'#fff');
-  if(phase==='CHOCANDO'){p(29,10,4,11,ink);p(25,21,7,3,ink);p(25,24,3,7,ink);p(28,30,8,3,ink);p(34,33,3,9,ink);oval(37,23,4,4,fur)}
-  return;
- }
- const scale=phase==='BEBÊ'?.92:phase==='JOVEM'?.97:1;
- ctx.save();ctx.translate(32,55);ctx.scale(scale,scale);ctx.translate(-32,-55);if(action==='play'&&frame%2===0){ctx.translate(0,-3)}if(action==='stretch'&&frame%2===0){ctx.translate(0,3);ctx.scale(1.1,.91)}
- if(pet.type==='cat'){
-  p(9,12,17,24,ink);p(38,12,17,24,ink);p(13,16,10,14,pink);p(41,16,10,14,pink);
-  oval(49,48,10,10,shade);oval(51,44,5,7,fur);
- }else if(pet.type==='bunny'){
-  oval(18,18,9,19,ink);oval(46,18,9,19,ink);oval(18,18,6,16,pink);oval(46,18,6,16,pink);
-  oval(52,48,6,7,cream);
- }else{
-  oval(16,22,10,10,ink);oval(48,22,10,10,ink);oval(16,22,6,6,pink);oval(48,22,6,6,pink);
- }
- oval(32,45,21,17,ink);oval(32,44,19,15,fur);oval(32,30,24,21,ink);oval(32,29,22,19,fur);
- if(pet.type==='cat'){oval(20,27,9,12,cream);oval(43,33,10,12,shade);p(8,37,8,2,ink);p(48,37,8,2,ink)}
- if(pet.type==='bunny'){oval(31,40,14,11,cream);oval(20,26,9,9,cream)}
- if(pet.type==='bear'){oval(31,41,13,10,cream);oval(30,36,12,9,cream)}
- oval(22,52,9,6,ink);oval(42,52,9,6,ink);oval(22,51,7,4,fur);oval(42,51,7,4,fur);
- const closing=pet.asleep||(t%4800<170)||action==='sleep'||(action==='wash'&&frame===2);
- if(closing){p(18,35,11,2,ink);p(36,35,11,2,ink)}
- else{oval(23,35,5,7,ink);oval(41,35,5,7,ink);p(24,32,2,3,'#fff');p(42,32,2,3,'#fff')}
- oval(16,42,5,3,pink);oval(48,42,5,3,pink);oval(32,43,4,3,pink);
- if(action==='eat'){oval(32,49,7,frame%2===0?3:6,ink);oval(32,49,4,frame%2===0?2:4,pink)}
- else if(pet.animation==='play'||pet.joy>65){p(27,48,10,2,ink)}
- else{p(29,49,6,2,ink)}
- if(action==='wash'){p(frame%2?9:14,23,5,5,'#9be9ed');p(frame%2?48:43,21,6,6,'#a7f3f5');p(35,12+(frame%3)*2,4,4,'#fff')}
- if(action==='heal'){p(29,18-(frame%2)*3,6,3,'#ef667a');p(30,16-(frame%2)*3,4,8,'#ef667a')}
- if(action==='eat'){p(49-(frame%3)*3,47+(frame%2),8,7,'#e94f5f');p(52-(frame%3)*3,44,3,4,'#78b95b')}
- if(action==='play'){p(48+(frame%3)*2,49+(frame%2)*3,9,9,'#ed7993');p(51+(frame%3)*2,49,2,8,'#ffe4a7')}
- if(pet.animation==='stretch'){p(10,46,12,6,fur);p(45,45,12,6,fur)}
- if(pet.health<25){p(27,23,10,3,'#8ab08e')}
- if(phase==='ADULTO'){p(28,18,8,3,cream);p(30,15,4,4,shade)}if(action==='idle'&&!pet.asleep&&frame===3){p(9,45,6,2,cream)}if(action==='hop'){p(19,54,8,3,pink);p(37,54,8,3,pink)}
- ctx.restore();
-}
+// High-resolution character images are rendered by the hero element; legacy 24px canvas atlas retired.
 function render(){if(!pet)return;const currentStage=stage();const face=currentStage==='OVO'?'🥚':currentStage==='CHOCANDO'?'🐣':`<img src="assets/${pet.type}-hd.webp?v=26" onerror="this.onerror=null;this.src='assets/${pet.type}-character.svg?v=25'" draggable="false" alt="${species[pet.type].label}" />`;const hero=$('heroPet');hero.style.fontSize='calc(var(--pet-size) * '+(eggStage()?'.73':'.94')+')';hero.style.scale=eggStage()?'1':currentStage==='BEBÊ'?'.82':currentStage==='JOVEM'?'.93':'1';hero.dataset.mood=pet.asleep?'sleep':pet.hunger<25?'hungry':pet.health<30?'sick':pet.joy>70?'happy':'calm';hero.dataset.phase=currentStage;hero.dataset.activity=pet.animation||'idle';const displayKey=pet.dead?'dead':face;if(hero.dataset.frame!==displayKey){hero.innerHTML=pet.dead?'💫':face;hero.dataset.frame=displayKey;}$('heroPet').style.display='flex';$('pet').classList.add('hidden-pixel');$('heroPet').classList.toggle('pet-egg',eggStage());$('heroPet').classList.toggle('pet-sleep',pet.asleep);const fields=[['🍎 Saciedade','hunger'],['😊 Felicidade','joy'],['⚡ Energia','energy'],['🧼 Higiene','clean'],['❤️ Saúde','health']];$('stats').innerHTML=fields.map(([t,k])=>'<div class="stat"><label><span>'+t+'</span><span>'+Math.round(pet[k])+'%</span></label><div class="track"><div class="fill '+(pet[k]<30?'low':'')+'" style="width:'+pet[k]+'%"></div></div></div>').join('')+'<div class="stat"><label><span>🪙 Moedas</span><span>'+pet.coins+'</span></label><div class="track"><div class="fill" style="width:'+Math.min(100,pet.coins)+'%"></div></div></div>';
 let droppings=$('scene').querySelector('.spark');if(!droppings){droppings=document.createElement('span');droppings.className='spark';$('scene').appendChild(droppings)}droppings.textContent=eggStage()?'':'💩'.repeat(pet.poops||0);$('petName').textContent=pet.name;$('petMeta').textContent=species[pet.type].label+' • '+stage()+' • '+age()+' min';$('dayLabel').textContent='DIA '+(1+Math.floor(age()/12));$('life').textContent=stage();$('coins').textContent='★ '+pet.coins;
 let mood=pet.dead?'💔 ADEUS':eggStage()?(stage()==='OVO'?'🥚 AQUECENDO':'✨ RACHANDO'):pet.asleep?'💤 DORMINDO':pet.health<25?'🤒 DOENTE':pet.hunger<25?'🍽 COM FOME':pet.clean<25?'🧼 SUJINHO':pet.joy<25?'😢 TRISTE':'😊 CONTENTE';$('mood').textContent=mood;$('status').textContent=mood; $('pet').classList.toggle('sleep',pet.asleep);$('pet').classList.toggle('egg',eggStage());$('pet').classList.toggle('sick',pet.health<30);
