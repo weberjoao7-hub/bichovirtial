@@ -164,19 +164,19 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 .choices button[data-type] span{font-size:11px;white-space:nowrap}
 .hero-pet{top:59%!important;max-height:74%}
 .pet-shadow{top:90%}
-.console:before{content:'BICHO VIRTUAL • V2.8'}
-/* V2.8: animated, self-contained pixel characters and species-specific pixel eggs. */
+.console:before{content:'BICHO VIRTUAL • V2.9'}
+/* V2.9: animated, self-contained pixel characters and species-specific pixel eggs. */
 .hero-pet:not(.pet-egg){animation:none!important}
 .hero-pet.pet-egg svg{display:block;width:77%;height:94%;max-height:100%;image-rendering:pixelated;filter:drop-shadow(0 5px 0 #5b775c4d)}
 .hero-pet.pet-egg.reaction-hop{animation:hero-bounce .48s steps(4,end) 2!important}
 .hero-pet[data-mood=dead] img{filter:grayscale(1) opacity(.58)}
 .hero-pet img{image-rendering:pixelated!important}
 @media(prefers-reduced-motion:reduce){.hero-pet.pet-egg{animation:none!important}}
-</style>
+.backup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.backup-actions button,.backup-import{border:2px solid #c7a8d6;border-radius:12px;background:#f3eafa;color:#523d67;min-height:48px;padding:9px 4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer}.backup-import{position:relative}.backup-import input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.backup-import:focus-within{outline:3px solid #365ca9;outline-offset:2px}@media(max-width:350px){.backup-actions{grid-template-columns:1fr}} </style>
 </head>
 <body>
 <main class="layout">
-<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V2.8</span> ✦</strong><span id="clock"></span></header>
+<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V2.9</span> ✦</strong><span id="clock"></span></header>
 <section class="console" aria-label="Console de bichinho virtual">
 <div class="bezel"><div class="screen">
 <div class="screen-head"><span id="dayLabel">DIA 1</span><span id="weather">☀ ENSOLARADO</span></div>
@@ -200,11 +200,16 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 (()=>{'use strict';
 const KEY='bichovirtual_save_v1',TICK=300000,MAX=100;
 const $=id=>document.getElementById(id),clamp=n=>Math.max(0,Math.min(MAX,n));
+let storageError=false;
+function storageFailure(){storageError=true;const badge=document.querySelector('.version-stamp');if(badge){badge.textContent='V2.9 ⚠';badge.title='Salvamento automático indisponível neste navegador';}}
+function storageGet(key){try{return localStorage.getItem(key)}catch(e){storageFailure();return null}}
+function storageSet(key,value){try{localStorage.setItem(key,value);return true}catch(e){storageFailure();return false}}
+function storageRemove(key){try{localStorage.removeItem(key);return true}catch(e){storageFailure();return false}}
 const species={cat:{symbol:'🐱',label:'Gatinho',color:'#f0a66b',ear:true},bunny:{symbol:'🐰',label:'Coelhinho',color:'#e9d8ca',ear:true},bear:{symbol:'🐻',label:'Ursinho',color:'#bf9c75',ear:false}};
-let pet=null,selected='cat',actionIndex=0,timer=null,animationFrame=0,animUntil=0,lastIdle=0,soundOn=localStorage.getItem('bichovirtual_sound')!=='off',audioCtx=null;const foods=[{name:'Maçã',emoji:'🍎',cost:0,full:16,joy:2},{name:'Ração',emoji:'🥣',cost:2,full:32,joy:0},{name:'Bolo',emoji:'🍰',cost:5,full:22,joy:18},{name:'Banquete',emoji:'🍱',cost:9,full:52,joy:12}];const awards=[{id:'start',label:'🥚 Primeira amizade',ok:p=>!!p.born},{id:'plays',label:'🎾 Companheiro de brincadeiras',ok:p=>p.plays>=10},{id:'child',label:'🌱 Crescer é uma aventura',ok:p=>age()>=3},{id:'adult',label:'⭐ Amigo para toda vida',ok:p=>age()>=12},{id:'rich',label:'🪙 Colecionador',ok:p=>p.coins>=50},{id:'clean',label:'🫧 Dia de spa',ok:p=>p.baths>=5}];
+let pet=null,selected='cat',actionIndex=0,timer=null,animationFrame=0,animUntil=0,lastIdle=0,soundOn=storageGet('bichovirtual_sound')!=='off',audioCtx=null;const foods=[{name:'Maçã',emoji:'🍎',cost:0,full:16,joy:2},{name:'Ração',emoji:'🥣',cost:2,full:32,joy:0},{name:'Bolo',emoji:'🍰',cost:5,full:22,joy:18},{name:'Banquete',emoji:'🍱',cost:9,full:52,joy:12}];const awards=[{id:'start',label:'🥚 Primeira amizade',ok:p=>!!p.born},{id:'plays',label:'🎾 Companheiro de brincadeiras',ok:p=>p.plays>=10},{id:'child',label:'🌱 Crescer é uma aventura',ok:p=>age()>=3},{id:'adult',label:'⭐ Amigo para toda vida',ok:p=>age()>=12},{id:'rich',label:'🪙 Colecionador',ok:p=>p.coins>=50},{id:'clean',label:'🫧 Dia de spa',ok:p=>p.baths>=5}];
 const actions=['feed','play','sleep','clean','heal','game'];
 function message(s){$('message').textContent=s}function beep(freq=600,duration=.09){if(!soundOn)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;audioCtx=audioCtx||new AC();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(.035,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
-function save(){if(pet)localStorage.setItem(KEY,JSON.stringify({...pet,animation:''}))}
+function save(){return pet?storageSet(KEY,JSON.stringify({...pet,animation:''})):false}
 function initial(name,type){return{name:name||'Pipoca',type,born:Date.now(),updated:Date.now(),hunger:78,joy:85,energy:86,clean:90,health:100,coins:15,asleep:false,poops:0,plays:0,baths:0,stage:0,phaseVersion:2,dead:false}}
 function age(){return Math.floor((Date.now()-pet.born)/60000)}
 function stage(){const t=(Date.now()-pet.born)/60000;if(pet.phaseVersion!==2)return t<3?'BEBÊ':t<12?'JOVEM':'ADULTO';return t<2?'OVO':t<4?'CHOCANDO':t<12?'BEBÊ':t<25?'JOVEM':'ADULTO'}
@@ -254,13 +259,47 @@ function minigame(){open('<h2>🎲 Adivinhe o presente!</h2><p>Escolha uma das c
 function open(html){$('modal').innerHTML=html;$('overlay').classList.remove('hidden')}
 function close(){$('overlay').classList.add('hidden')}
 function welcome(){open('<h2>🥚 Um novo amigo!</h2><p>Escolha seu bichinho, dê um nome e cuide dele todos os dias. Ele começa no ovo, choca e cresce visualmente!</p><div class="choices" id="types">'+Object.entries(species).map(([k,v])=>'<button data-type="'+k+'" class="'+(k===selected?'selected':'')+'" title="'+v.label+'">'+'<img src="assets/'+k+'-hd.webp?v=27" alt="'+v.label+'" draggable="false"><span>'+v.label+'</span></button>').join('')+'</div><p><input id="nickname" maxlength="18" placeholder="Nome do bichinho" value="Pipoca" aria-label="Nome do bichinho"></p><button class="primary" id="begin">ADOTAR MEU BICHINHO ♥</button>');document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{selected=b.dataset.type;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('selected',x===b))});$('begin').onclick=()=>{pet=initial($('nickname').value.trim().slice(0,18),selected);save();close();message('🥚 Seu ovo chegou! Toque nele e acompanhe seu nascimento.');render()}}
-function help(){open('<h2>📖 Como jogar</h2><p>Cuide do seu bichinho com os seis botões. Alimente quando estiver com fome, brinque para aumentar a felicidade, dê banho e deixe dormir para recuperar energia.</p><p>O tempo passa automaticamente, mesmo com o jogo fechado. O ovo racha após 2 minutos e nasce depois de 4 minutos. O bichinho cresce de tamanho até ficar adulto. No minijogo, ganhe moedas para comprar remédios.</p><p class="help">Os botões da console ◀ ● ▶ selecionam e executam as ações. O progresso fica salvo neste navegador.</p><button class="primary" id="ok">ENTENDI!</button>');$('ok').onclick=close}
-function reset(){open('<h2>Recomeçar aventura?</h2><p>Isso apaga o bichinho atual e todo o progresso salvo neste navegador.</p><button class="primary" id="yes">SIM, RECOMEÇAR</button><button class="primary" style="background:#8c91a4" id="no">CANCELAR</button>');$('yes').onclick=()=>{localStorage.removeItem(KEY);pet=null;welcome()};$('no').onclick=close}
-try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&species[saved.type]&&typeof saved.born==='number'){pet={...initial(saved.name,saved.type),...saved};if(!('phaseVersion' in saved))pet.phaseVersion=1;pet.animation='';updateTime()}}catch(e){console.warn('Save inválido',e)}
+function exportBackup(){
+ if(!pet){message('Adote um bichinho antes de criar o backup.');return}
+ const data={format:'bichovirtual-backup',version:1,exportedAt:new Date().toISOString(),pet:{...pet,animation:''}};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download='bicho-virtual-backup.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ message('Backup gerado! Guarde o arquivo em um lugar seguro.');
+}
+function normalizeBackup(data){
+ if(!data||data.format!=='bichovirtual-backup'||data.version!==1)throw Error('Formato de backup não reconhecido.');
+ const p=data.pet,now=Date.now();
+ if(!p||!species[p.type]||typeof p.name!=='string'||!p.name.trim()||p.name.length>18)throw Error('Nome ou espécie inválidos.');
+ if(!Number.isFinite(p.born)||p.born<946684800000||p.born>now+60000||!Number.isFinite(p.updated)||p.updated<p.born-86400000||p.updated>now+60000)throw Error('Datas inválidas.');
+ for(const key of ['hunger','joy','energy','clean','health'])if(!Number.isFinite(p[key])||p[key]<0||p[key]>100)throw Error('Indicador inválido: '+key);
+ if(!Number.isSafeInteger(p.coins)||p.coins<0||p.coins>1000000)throw Error('Moedas inválidas.');
+ for(const key of ['poops','plays','baths'])if(p[key]!==undefined&&(!Number.isSafeInteger(p[key])||p[key]<0||p[key]>1000000))throw Error('Contador inválido: '+key);
+ return {...initial(p.name.trim(),p.type),name:p.name.trim(),born:p.born,updated:p.updated,
+ hunger:p.hunger,joy:p.joy,energy:p.energy,clean:p.clean,health:p.health,coins:p.coins,
+ asleep:p.asleep===true,poops:Math.min(4,p.poops||0),plays:p.plays||0,baths:p.baths||0,
+ phaseVersion:p.phaseVersion===1?1:2,dead:p.dead===true,poopCounter:Number.isFinite(p.poopCounter)?Math.max(0,Math.min(35,p.poopCounter)):0,
+ lastBonusAt:Number.isFinite(p.lastBonusAt)?p.lastBonusAt:0,lastPhase:typeof p.lastPhase==='string'?p.lastPhase:undefined,animation:''};
+}
+async function importBackup(file){
+ if(!file)return;
+ if(file.size>200000){message('Arquivo muito grande para ser um backup válido.');close();return}
+ try{
+  const data=JSON.parse(await file.text()),restored=normalizeBackup(data);
+  const serialized=JSON.stringify({...restored,animation:''});
+  if(!storageSet(KEY,serialized))throw Error('O navegador bloqueou o salvamento. Libere o armazenamento antes de restaurar.');
+  pet=restored;animUntil=0;lastIdle=Date.now();updateTime();evolve();close();render();
+  message('Backup restaurado! Seu bichinho voltou com o progresso salvo.');
+ }catch(e){close();message('Não foi possível restaurar: '+e.message)}
+}
+function help(){open('<h2>📖 Como jogar</h2><p>Cuide do seu bichinho com os seis botões. Alimente, brinque, dê banho e deixe dormir para recuperar energia.</p><p>O tempo passa mesmo com o jogo fechado. O ovo racha após 2 minutos e nasce depois de 4 minutos.</p><p class="help">O progresso é salvo neste navegador. Faça um backup para não perdê-lo ao trocar de aparelho ou limpar os dados.</p><div class="backup-actions"><button type="button" id="backupExport">📤 Baixar backup</button><label class="backup-import">📥 Restaurar backup<input id="backupFile" type="file" accept=".json,application/json" aria-label="Escolher arquivo de backup"></label></div><p class="help">Restaurar substitui o bichinho atual. Guarde o arquivo em local privado.</p><button class="primary" id="ok">ENTENDI!</button>');
+ $('ok').onclick=close;$('backupExport').onclick=exportBackup;$('backupFile').onchange=e=>importBackup(e.target.files[0]);
+}
+function reset(){open('<h2>Recomeçar aventura?</h2><p>Isso apaga o bichinho atual e todo o progresso salvo neste navegador.</p><button class="primary" id="yes">SIM, RECOMEÇAR</button><button class="primary" style="background:#8c91a4" id="no">CANCELAR</button>');$('yes').onclick=()=>{storageRemove(KEY);pet=null;welcome()};$('no').onclick=close}
+try{const saved=JSON.parse(storageGet(KEY));if(saved&&species[saved.type]&&typeof saved.born==='number'){pet={...initial(saved.name,saved.type),...saved};if(!('phaseVersion' in saved))pet.phaseVersion=1;pet.animation='';updateTime()}}catch(e){console.warn('Save inválido',e)}
 $('actions').addEventListener('click',e=>{const btn=e.target.closest('[data-act]');if(btn){actionIndex=actions.indexOf(btn.dataset.act);act(btn.dataset.act)}});
 $('prev').onclick=()=>{actionIndex=(actionIndex+5)%6;render();message('Selecionado: '+$('actions').children[actionIndex].innerText)};
 $('next').onclick=()=>{actionIndex=(actionIndex+1)%6;render();message('Selecionado: '+$('actions').children[actionIndex].innerText)};
-$('select').onclick=()=>act(actions[actionIndex]);$('pet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('heroPet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('helpBtn').onclick=help;$('resetBtn').onclick=reset;$('achBtn').onclick=()=>{if(pet)achievements()};$('soundBtn').onclick=()=>{soundOn=!soundOn;localStorage.setItem('bichovirtual_sound',soundOn?'on':'off');$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';if(soundOn)beep(700)};$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';
+$('select').onclick=()=>act(actions[actionIndex]);$('pet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('heroPet').onclick=()=>{sparkle(eggStage()?'🥚':'💞');act('play')};$('helpBtn').onclick=help;$('resetBtn').onclick=reset;$('achBtn').onclick=()=>{if(pet)achievements()};$('soundBtn').onclick=()=>{soundOn=!soundOn;storageSet('bichovirtual_sound',soundOn?'on':'off');$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';if(soundOn)beep(700)};$('soundBtn').textContent=soundOn?'🔊 Som':'🔇 Mudo';
 function animatePet(){if(pet&&!pet.dead){const time=Date.now(),alive=!pet.asleep&&!eggStage();if(animUntil&&time>animUntil){pet.animation='';animUntil=0;$('heroPet').classList.remove('reaction-eat','reaction-play','reaction-wash','reaction-heal','reaction-sleep','reaction-stretch','reaction-hop');render()}if(alive&&!animUntil&&time-lastIdle>6500){lastIdle=time;const roll=Math.random();if(roll<.45)react('stretch',1100);else if(roll<.8)react('hop',1050);else if(roll<.93){if(time-(pet.lastBonusAt||0)>=15*60000){pet.lastBonusAt=time;pet.coins+=2;save();sparkle('⭐ +2');message(pet.name+' encontrou duas moedas!')}else message(pet.name+' está explorando o jardim 🌿')}else message(pet.name+' está olhando as nuvens ☁')}const drift=alive?Math.sin(time/1400)*Math.min(9,Math.max(3,$('scene').clientWidth*.02)):0;const shadow=$('petShadow');shadow.style.transform='translateX(-50%) scale('+(pet.animation==='play'||pet.animation==='hop'?.76:1)+')';shadow.style.opacity=(pet.animation==='play'||pet.animation==='hop'?.24:.48);const prop=$('sceneProp');const act=pet.animation||'';const propVal=act==='eat'?'🥣':act==='play'?'🧶':act==='wash'?'🫧':act==='heal'?'💚':pet.asleep?'💤':'';if(prop.dataset.value!==propVal){prop.dataset.value=propVal;prop.textContent=propVal}$('heroPet').style.marginLeft=drift+'px';$('pet').style.marginLeft=drift+'px'}animationFrame=requestAnimationFrame(animatePet)}
 function heartbeat(){let now=new Date();$('clock').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});if(pet){updateTime();evolve();render()}}
 heartbeat();if(!pet)welcome();animationFrame=requestAnimationFrame(animatePet);timer=setInterval(heartbeat,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)heartbeat()});
