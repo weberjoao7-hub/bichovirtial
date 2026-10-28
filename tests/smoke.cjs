@@ -29,4 +29,6 @@ for(const type of ['cat','bunny','bear']){
 assert.match(html,/height:100dvh/);
 assert.match(match[1],/localStorage\.setItem\(KEY/);
 assert.match(match[1],/localStorage\.getItem\(KEY/);
+assert.match(match[1],/function normalizeBackup\\(data\\)/);
+assert.match(match[1],/async function importBackup\\(file\\)/);
 console.log('All smoke tests passed.');
