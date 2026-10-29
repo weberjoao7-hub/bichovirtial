@@ -164,8 +164,8 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 .choices button[data-type] span{font-size:11px;white-space:nowrap}
 .hero-pet{top:59%!important;max-height:74%}
 .pet-shadow{top:90%}
-.console:before{content:'BICHO VIRTUAL • V2.9'}
-/* V2.9: animated, self-contained pixel characters and species-specific pixel eggs. */
+.console:before{content:'BICHO VIRTUAL • V3.0'}
+/* V3.0: animated, self-contained pixel characters and species-specific pixel eggs. */
 .hero-pet:not(.pet-egg){animation:none!important}
 .hero-pet.pet-egg svg{display:block;width:77%;height:94%;max-height:100%;image-rendering:pixelated;filter:drop-shadow(0 5px 0 #5b775c4d)}
 .hero-pet.pet-egg.reaction-hop{animation:hero-bounce .48s steps(4,end) 2!important}
@@ -176,7 +176,7 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 </head>
 <body>
 <main class="layout">
-<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V2.9</span> ✦</strong><span id="clock"></span></header>
+<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V3.0</span> ✦</strong><span id="clock"></span></header>
 <section class="console" aria-label="Console de bichinho virtual">
 <div class="bezel"><div class="screen">
 <div class="screen-head"><span id="dayLabel">DIA 1</span><span id="weather">☀ ENSOLARADO</span></div>
@@ -198,10 +198,10 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 <div class="overlay hidden" id="overlay"><section class="modal" id="modal" aria-live="polite"></section></div>
 <script>
 (()=>{'use strict';
-const KEY='bichovirtual_save_v1',TICK=300000,MAX=100;
+const KEY='bichovirtual_save_v1',TICK=300000,MAX=100,GAME_COOLDOWN_MS=60000;
 const $=id=>document.getElementById(id),clamp=n=>Math.max(0,Math.min(MAX,n));
 let storageError=false;
-function storageFailure(){storageError=true;const badge=document.querySelector('.version-stamp');if(badge){badge.textContent='V2.9 ⚠';badge.title='Salvamento automático indisponível neste navegador';}}
+function storageFailure(){storageError=true;const badge=document.querySelector('.version-stamp');if(badge){badge.textContent='V3.0 ⚠';badge.title='Salvamento automático indisponível neste navegador';}}
 function storageGet(key){try{return localStorage.getItem(key)}catch(e){storageFailure();return null}}
 function storageSet(key,value){try{localStorage.setItem(key,value);return true}catch(e){storageFailure();return false}}
 function storageRemove(key){try{localStorage.removeItem(key);return true}catch(e){storageFailure();return false}}
@@ -210,7 +210,7 @@ let pet=null,selected='cat',actionIndex=0,timer=null,animationFrame=0,animUntil=
 const actions=['feed','play','sleep','clean','heal','game'];
 function message(s){$('message').textContent=s}function beep(freq=600,duration=.09){if(!soundOn)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;audioCtx=audioCtx||new AC();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(.035,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
 function save(){return pet?storageSet(KEY,JSON.stringify({...pet,animation:''})):false}
-function initial(name,type){return{name:name||'Pipoca',type,born:Date.now(),updated:Date.now(),hunger:78,joy:85,energy:86,clean:90,health:100,coins:15,asleep:false,poops:0,plays:0,baths:0,stage:0,phaseVersion:2,dead:false}}
+function initial(name,type){return{name:name||'Pipoca',type,born:Date.now(),updated:Date.now(),hunger:78,joy:85,energy:86,clean:90,health:100,coins:15,asleep:false,poops:0,plays:0,baths:0,lastGameAt:0,stage:0,phaseVersion:2,dead:false}}
 function age(){return Math.floor((Date.now()-pet.born)/60000)}
 function stage(){const t=(Date.now()-pet.born)/60000;if(pet.phaseVersion!==2)return t<3?'BEBÊ':t<12?'JOVEM':'ADULTO';return t<2?'OVO':t<4?'CHOCANDO':t<12?'BEBÊ':t<25?'JOVEM':'ADULTO'}
 function eggStage(){return stage()==='OVO'||stage()==='CHOCANDO'}
@@ -255,7 +255,7 @@ if(type==='heal'){if(pet.coins<4){message('São necessárias 4 moedas para o rem
 save();render()}
 function foodMenu(){open('<h2>🍽 Hora de comer!</h2><p>Escolha a refeição do seu amigo.</p><div class="food-grid">'+foods.map((f,i)=>'<button data-food="'+i+'"><span>'+f.emoji+'</span>'+f.name+'<br>★ '+f.cost+' moedas</button>').join('')+'</div><button class="primary" style="background:#9295a4" id="cancelFood">VOLTAR</button>');$('cancelFood').onclick=close;document.querySelectorAll('[data-food]').forEach(b=>b.onclick=()=>{const food=foods[Number(b.dataset.food)];if(pet.coins<food.cost){message('Você precisa de '+food.cost+' moedas para comprar '+food.name+'.');beep(180,.2);close();return}pet.coins-=food.cost;pet.hunger=clamp(pet.hunger+food.full);pet.joy=clamp(pet.joy+food.joy);pet.clean=clamp(pet.clean-4);react('eat',1450);sparkle(food.emoji);beep(840);message(pet.name+' adorou '+food.name+'!');save();close();render()})}
 function achievements(){open('<h2>🏆 Conquistas</h2><p>Complete desafios enquanto seu amigo cresce.</p>'+awards.map(a=>'<div class="achievement '+(a.ok(pet)?'':'locked')+'">'+(a.ok(pet)?'✅':'🔒')+' '+a.label+'</div>').join('')+'<button class="primary" id="achClose">VOLTAR</button>');$('achClose').onclick=close}
-function minigame(){open('<h2>🎲 Adivinhe o presente!</h2><p>Escolha uma das caixas. Você pode ganhar até 8 moedas!</p><div class="choices"><button data-guess="0">🎁</button><button data-guess="1">🎁</button><button data-guess="2">🎁</button></div><p class="help">Brinque para ganhar moedas e cuidar do seu amigo.</p>');const winner=Math.floor(Math.random()*3);document.querySelectorAll('[data-guess]').forEach(b=>b.onclick=()=>{let won=Number(b.dataset.guess)===winner;beep(won?900:330,.13);pet.coins+=won?8:2;pet.joy=clamp(pet.joy+10);react('play',1100);save();close();sparkle(won?'🌟':'💗');message(won?'Acertou! +8 moedas!':'Quase! +2 moedas pela tentativa.');render()})}
+function minigame(){const remaining=Math.max(0,GAME_COOLDOWN_MS-(Date.now()-(pet.lastGameAt||0)));if(remaining>0){message('🎲 Aguarde '+Math.ceil(remaining/1000)+'s para jogar novamente.');return}open('<h2>🎲 Adivinhe o presente!</h2><p>Escolha uma das caixas. Você pode ganhar até 8 moedas!</p><div class="choices"><button data-guess="0">🎁</button><button data-guess="1">🎁</button><button data-guess="2">🎁</button></div><p class="help">Uma rodada por minuto. Brinque para ganhar moedas e cuidar do seu amigo.</p>');const winner=Math.floor(Math.random()*3);let resolved=false;document.querySelectorAll('[data-guess]').forEach(b=>b.onclick=()=>{if(resolved)return;resolved=true;document.querySelectorAll('[data-guess]').forEach(button=>button.disabled=true);const won=Number(b.dataset.guess)===winner;pet.lastGameAt=Date.now();beep(won?900:330,.13);pet.coins+=won?8:2;pet.joy=clamp(pet.joy+10);react('play',1100);save();close();sparkle(won?'🌟':'💗');message(won?'Acertou! +8 moedas!':'Quase! +2 moedas pela tentativa.');render()})}
 function open(html){$('modal').innerHTML=html;$('overlay').classList.remove('hidden')}
 function close(){$('overlay').classList.add('hidden')}
 function welcome(){open('<h2>🥚 Um novo amigo!</h2><p>Escolha seu bichinho, dê um nome e cuide dele todos os dias. Ele começa no ovo, choca e cresce visualmente!</p><div class="choices" id="types">'+Object.entries(species).map(([k,v])=>'<button data-type="'+k+'" class="'+(k===selected?'selected':'')+'" title="'+v.label+'">'+'<img src="assets/'+k+'-hd.webp?v=27" alt="'+v.label+'" draggable="false"><span>'+v.label+'</span></button>').join('')+'</div><p><input id="nickname" maxlength="18" placeholder="Nome do bichinho" value="Pipoca" aria-label="Nome do bichinho"></p><button class="primary" id="begin">ADOTAR MEU BICHINHO ♥</button>');document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{selected=b.dataset.type;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('selected',x===b))});$('begin').onclick=()=>{pet=initial($('nickname').value.trim().slice(0,18),selected);save();close();message('🥚 Seu ovo chegou! Toque nele e acompanhe seu nascimento.');render()}}
@@ -278,7 +278,7 @@ function normalizeBackup(data){
  hunger:p.hunger,joy:p.joy,energy:p.energy,clean:p.clean,health:p.health,coins:p.coins,
  asleep:p.asleep===true,poops:Math.min(4,p.poops||0),plays:p.plays||0,baths:p.baths||0,
  phaseVersion:p.phaseVersion===1?1:2,dead:p.dead===true,poopCounter:Number.isFinite(p.poopCounter)?Math.max(0,Math.min(35,p.poopCounter)):0,
- lastBonusAt:Number.isFinite(p.lastBonusAt)?p.lastBonusAt:0,lastPhase:typeof p.lastPhase==='string'?p.lastPhase:undefined,animation:''};
+ lastBonusAt:Number.isFinite(p.lastBonusAt)?p.lastBonusAt:0,lastGameAt:Number.isFinite(p.lastGameAt)?Math.max(0,Math.min(now,p.lastGameAt)):0,lastPhase:typeof p.lastPhase==='string'?p.lastPhase:undefined,animation:''};
 }
 async function importBackup(file){
  if(!file)return;
