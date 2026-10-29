@@ -72,9 +72,16 @@ async function run(){
    assert.equal((await state(page)).asleep,false,'Wake failed');
    await page.locator('[data-act="game"]').click();
    await page.locator('[data-guess="0"]').click();
-   assert.ok((await state(page)).coins>=0,'Minigame failed');
+   const afterGame=await state(page);
+   assert.ok(afterGame.coins>=0&&afterGame.lastGameAt>0,'Minigame failed');
+   await page.evaluate(()=>document.querySelector('[data-guess="1"]').click());
+   assert.equal((await state(page)).coins,afterGame.coins,'Repeated box click paid twice');
+   await page.locator('[data-act="game"]').click();
+   assert.match(await page.locator('#message').innerText(),/Aguarde.*s/i,'Cooldown warning missing');
+   assert.equal((await state(page)).coins,afterGame.coins,'Cooldown allowed extra coins');
    await page.reload({waitUntil:'load'});
    assert.equal((await state(page)).type,type,'Save restore failed');
+   assert.equal((await state(page)).lastGameAt,afterGame.lastGameAt,'Minigame cooldown did not persist');
    await page.locator('#helpBtn').click();
    const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#backupExport').click()]);
    assert.equal(download.suggestedFilename(),'bicho-virtual-backup.json');
