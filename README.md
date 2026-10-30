@@ -4,9 +4,9 @@ Jogo mobile-first de bichinho virtual, publicado como site estático, sem servid
 
 **Jogar:** https://weberjoao7-hub.github.io/bichovirtial/jogar-v2.html
 
-## Estado atual — V3.0 (29/10/2026)
+## Estado atual — V3.1 (30/10/2026)
 
-- Gato, coelho e urso usam arte pixel HD original com transparência.
+- Gato, coelho e urso usam arte pixel HD com transparência. Na V3.1, o topo recortado dos personagens recebeu reconstrução manual em geometria pixel art (orelhas e coroas) sobre a arte original; a revisão visual final ainda está pendente.
 - Animações por espécie e estado: respirar, felicidade, fome, doença, sono, comer, brincar, banho, cuidados e alongamento. A arte é incorporada em SVGs independentes com estados controlados por fragmento da URL.
 - Ovo pixel art específico para cada espécie, com versão rachada antes do nascimento.
 - Ações, crescimento, moedas, minijogo com intervalo de 60 segundos e conquistas; progresso salvo no localStorage do navegador.
@@ -18,9 +18,11 @@ Jogo mobile-first de bichinho virtual, publicado como site estático, sem servid
 
 Abra index.html ou jogar-v2.html em um servidor estático. Ambos devem permanecer idênticos. Execute `node tests/smoke.cjs` para validar os três animais, estados do ovo, sintaxe, animações e integridade dos arquivos de arte. O workflow de qualidade também executa `node tests/browser.cjs` com Playwright e Chromium, simulando ações, backup/restauração e quatro tamanhos de tela. Capturas de tela são anexadas como artefatos do workflow. Para rodar os testes de navegador localmente, instale Playwright e Chromium.
 
-**Limitações conhecidas:** as animações usam transformações em etapas sobre o desenho original, e não um conjunto de quadros redesenhados à mão; testes manuais em diferentes aparelhos reais ainda são necessários. O progresso fica no navegador/dispositivo e não é sincronizado entre aparelhos.
+**Limitações conhecidas:** as reconstruções de cabeça ainda precisam de aprovação visual em screenshots e aparelhos reais; as animações usam transformações em etapas sobre o desenho original, e não um conjunto de quadros redesenhados à mão. O arquivo WebP de contingência continua com o recorte antigo caso o SVG falhe; testes manuais em diferentes aparelhos reais ainda são necessários. O progresso fica no navegador/dispositivo e não é sincronizado entre aparelhos.
 
 ## Histórico recente
+
+- **V3.1:** reconstrução pixel art dos topos ausentes de gato, coelho e urso nos SVGs animados; adoção agora mostra os mesmos personagens do jogo, com visual unificado. SVGs respeitam preferência por movimento reduzido. Testes passaram a exigir arte reconstruída e carregamento dos três personagens na adoção.
 
 - **V3.0:** o minijogo de presentes passou a ter uma rodada por minuto, com proteção contra cliques duplicados e intervalo persistido no salvamento e no backup. Isso impede moedas ilimitadas por repetição instantânea.
 
