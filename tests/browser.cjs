@@ -40,6 +40,9 @@ async function run(){
    const page=await context.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));
    await page.goto(base+'/jogar-v2.html',{waitUntil:'load'});
+   const adoptionArt=await page.locator('[data-type] img').evaluateAll(async imgs=>Promise.all(imgs.map(async img=>{await img.decode().catch(()=>{});return {src:img.getAttribute('src'),width:img.naturalWidth}})));
+   assert.equal(adoptionArt.length,3,'Adoption must show all species');
+   for(const art of adoptionArt){assert.ok(art.src.includes('motion.svg?v=31#idle'),'Cropped adoption art is still used');assert.ok(art.width>0,'Adoption art failed to load '+art.src)}
    await page.locator('[data-type="'+type+'"]').click();
    await page.locator('#nickname').fill('Teste '+type);
    await page.locator('#begin').click();
