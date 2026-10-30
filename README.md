@@ -16,7 +16,7 @@ Jogo mobile-first de bichinho virtual, publicado como site estático, sem servid
 
 ## Desenvolvimento e verificação
 
-Abra index.html ou jogar-v2.html em um servidor estático. Ambos devem permanecer idênticos. Execute `node tests/smoke.cjs` para validar os três animais, estados do ovo, sintaxe, animações e integridade dos arquivos de arte. O workflow de qualidade também executa `node tests/browser.cjs` com Playwright e Chromium, simulando ações, backup/restauração e quatro tamanhos de tela. Capturas de tela são anexadas como artefatos do workflow. Para rodar os testes de navegador localmente, instale Playwright e Chromium.
+Abra index.html ou jogar-v2.html em um servidor estático. Ambos devem permanecer idênticos. Execute `node tests/smoke.cjs` para validar os três animais, estados do ovo, sintaxe, animações e integridade dos arquivos de arte. O workflow de qualidade também executa `node tests/browser.cjs` com Playwright e Chromium, simulando ações, backup/restauração e quatro tamanhos de tela. São geradas 12 capturas de tela dos personagens (3 espécies × 4 resoluções) e uma da adoção, anexadas como artefatos do workflow para revisão visual. Para rodar os testes de navegador localmente, instale Playwright e Chromium.
 
 **Limitações conhecidas:** as reconstruções de cabeça ainda precisam de aprovação visual em screenshots e aparelhos reais; as animações usam transformações em etapas sobre o desenho original, e não um conjunto de quadros redesenhados à mão. O arquivo WebP de contingência continua com o recorte antigo caso o SVG falhe; testes manuais em diferentes aparelhos reais ainda são necessários. O progresso fica no navegador/dispositivo e não é sincronizado entre aparelhos.
 
