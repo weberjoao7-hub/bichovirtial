@@ -43,6 +43,7 @@ async function run(){
    const adoptionArt=await page.locator('[data-type] img').evaluateAll(async imgs=>Promise.all(imgs.map(async img=>{await img.decode().catch(()=>{});return {src:img.getAttribute('src'),width:img.naturalWidth}})));
    assert.equal(adoptionArt.length,3,'Adoption must show all species');
    for(const art of adoptionArt){assert.ok(art.src.includes('motion.svg?v=31#idle'),'Cropped adoption art is still used');assert.ok(art.width>0,'Adoption art failed to load '+art.src)}
+   if(type==='cat')await page.screenshot({path:path.join(output,'adoption-mobile.png')});
    await page.locator('[data-type="'+type+'"]').click();
    await page.locator('#nickname').fill('Teste '+type);
    await page.locator('#begin').click();
@@ -53,7 +54,7 @@ async function run(){
    await page.locator('#heroPet img').waitFor();
    const loaded=await page.locator('#heroPet img').evaluate(async img=>{if(!img.complete)await new Promise(r=>{img.onload=r;img.onerror=r});return {width:img.naturalWidth,src:img.getAttribute('src')}});
    assert.ok(loaded.width>0,'Artwork not loaded: '+type+' '+JSON.stringify(loaded));
-   for(const [w,h] of [[320,568],[375,667],[390,844],[430,932]])await checkViewport(page,w,h);
+   for(const [w,h] of [[320,568],[375,667],[390,844],[430,932]]){await checkViewport(page,w,h);await page.screenshot({path:path.join(output,type+'-'+w+'x'+h+'.png')})}
    await page.setViewportSize({width:390,height:844});
    await page.screenshot({path:path.join(output,type+'-mobile.png')});
    const before=await state(page);
