@@ -1,9 +1,9 @@
 (function(){'use strict';
 const species={"cat":{"main":"#E89A52","light":"#FFBA72","shade":"#BA693E","deep":"#8E4E3C","belly":"#FFF0D5","pink":"#F3A3AD","iris":"#408A79","outline":"#352636"},"bunny":{"main":"#E9DCE6","light":"#FFF7F1","shade":"#C8B7CA","deep":"#A992B3","belly":"#FFFFFF","pink":"#F5A4BB","iris":"#74619C","outline":"#403044"},"bear":{"main":"#BE7C50","light":"#DB9A62","shade":"#9D583E","deep":"#7D4439","belly":"#FFE6BC","pink":"#EFA3A3","iris":"#624A3C","outline":"#382936"}};
 const poses=["idle","happy","hungry","sick","sleep","eat","play","wash","heal","hop","stretch"];
-(d,fill,stroke='',w=0)=>`<path d="${d}" fill="${fill}"${stroke?` stroke="${stroke}" stroke-width="${w}" stroke-linejoin="miter"`:''}/>`
-(x,y,w,h,fill)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}"/>`
-(cx,cy,rx,ry,fill,stroke='',sw=0)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}"${stroke?` stroke="${stroke}" stroke-width="${sw}"`:''}/>`
+const path=(d,fill,stroke='',w=0)=>`<path d="${d}" fill="${fill}"${stroke?` stroke="${stroke}" stroke-width="${w}" stroke-linejoin="miter"`:''}/>`;
+const rect=(x,y,w,h,fill)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}"/>`;
+const ellipse=(cx,cy,rx,ry,fill,stroke='',sw=0)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}"${stroke?` stroke="${stroke}" stroke-width="${sw}"`:''}/>`;
 function ears(t,p,f,c){let s='';const lean=(p==='sleep'||p==='sick')?3:((p==='play'||p==='happy')&&f?2:0);if(t==='cat'){
  s+=path(`M27 41V10H33V15H39V19H45V24H49V41Z`,c.outline)+path('M31 37V17H35V21H39V25H44V37Z',c.main)+path('M34 34V23H37V26H41V34Z',c.pink);
  s+=path(`M79 41V24H84V19H90V15H96V10H101V41Z`,c.outline)+path('M83 37V25H89V21H93V17H97V37Z',c.main)+path('M87 34V26H91V23H94V34Z',c.pink);
