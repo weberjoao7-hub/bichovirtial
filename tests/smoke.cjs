@@ -34,6 +34,8 @@ for(const type of ['cat','bunny','bear']){
  console.log('PASS '+type+': 11 poses, 22 unique drawn frames, complete silhouettes and eggs');
 }
 assert.match(html,/height:100dvh/);
+assert.match(html,/lastIdle=Date\.now\(\)/,'Idle timer must start when page loads');
+assert.match(html,/lastIdle=Date\.now\(\);pet\.animation=kind/,'Idle timer must reset after interactions');
 assert.match(html,/PixelPets\.url\(k\)/,'Adoption still uses cropped art');
 assert.match(html,/PixelPets\.url\(pet\.type\)/,'Game still uses cropped art');
 assert.match(html,/assets\/pet-art\.js/,'Pixel art engine not loaded');
