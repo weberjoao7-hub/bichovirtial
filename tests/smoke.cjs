@@ -9,29 +9,36 @@ new vm.Script(match[1],{filename:'index.html'});
 const a=match[1].indexOf('const eggColors='),b=match[1].indexOf('function render()');
 assert.ok(a>=0&&b>a,'Pixel egg renderer missing');
 const eggSvg=new Function(match[1].slice(a,b)+';return eggSvg;')();
+const source=fs.readFileSync(path.join(root,'assets/pet-art.js'),'utf8');
+new vm.Script(source,{filename:'assets/pet-art.js'});
+const sandbox={window:{},URL:{createObjectURL:()=> 'blob:mock'},Blob:class{}};
+vm.runInNewContext(source,sandbox);
+const art=sandbox.window.PixelPets;
+const poses=['idle','happy','hungry','sick','sleep','eat','play','wash','heal','hop','stretch'];
+assert.deepEqual(Array.from(art.poses),poses);
 for(const type of ['cat','bunny','bear']){
- const art=fs.readFileSync(path.join(root,'assets',type+'-motion.svg'),'utf8');
- const embedded=art.match(/data:image\/webp;base64,([A-Za-z0-9+\/=]+)/);
- assert.ok(embedded,'Missing pixel art '+type);
- assert.match(art,/class="head-reconstruction"/,'Missing hand-reconstructed ears/crown '+type);
- assert.match(art,/viewBox="-5 -38 190 218"/,'Repaired head outside SVG viewport '+type);
- assert.match(art,/prefers-reduced-motion:reduce/,'Reduced-motion support missing '+type);
- const data=Buffer.from(embedded[1],'base64');
- assert.equal(data.subarray(0,4).toString(),'RIFF');
- assert.equal(data.subarray(8,12).toString(),'WEBP');
- for(const pose of ['idle','happy','hungry','sick','sleep','eat','play','wash','heal','hop','stretch'])
-  assert.ok(art.includes('id="'+pose+'"'),type+' missing '+pose);
- for(const pose of ['sleep','eat','play','wash','heal'])
-  assert.ok(art.includes('#'+pose+':target'),type+' missing animation '+pose);
+ const svg=art.generate(type);
+ assert.match(svg,/viewBox="0 0 128 128"/,'Unexpected canvas '+type);
+ assert.match(svg,/shape-rendering="crispEdges"/,'Missing crisp pixel edges '+type);
+ assert.match(svg,/prefers-reduced-motion:reduce/,'Reduced-motion support missing '+type);
+ assert.doesNotMatch(svg,/data:image\/webp;base64/,'Old cropped raster still embedded '+type);
+ for(const pose of poses){
+  const a=svg.indexOf('class="frame frame-'+pose+'-0"'),b=svg.indexOf('class="frame frame-'+pose+'-1"');
+  assert.ok(a>=0&&b>a,type+' missing independently drawn frames for '+pose);
+  const next=svg.indexOf('class="frame frame-',b+1);
+  assert.notEqual(svg.slice(a,b),svg.slice(b,next<0?undefined:next),type+' frames identical for '+pose);
+  if(pose!=='idle')assert.ok(svg.includes('#'+pose+':target~.frame-'+pose+'-0'),type+' missing state '+pose);
+ }
  const whole=eggSvg(type,false),cracked=eggSvg(type,true);
- assert.match(whole,/<svg/);
- assert.notEqual(whole,cracked);
- assert.match(cracked,/stroke-linejoin/);
- console.log('PASS '+type+': art, poses, egg and hatching');
+ assert.match(whole,/<svg/);assert.notEqual(whole,cracked);assert.match(cracked,/stroke-linejoin/);
+ console.log('PASS '+type+': 11 poses, 22 unique drawn frames, complete silhouettes and eggs');
 }
 assert.match(html,/height:100dvh/);
-assert.match(html,/motion\.svg\?v=31#idle/,'Adoption still uses cropped fallback art');
-assert.match(html,/V3\.1/,'Expected version stamp missing');
+assert.match(html,/PixelPets\.url\(k\)/,'Adoption still uses cropped art');
+assert.match(html,/PixelPets\.url\(pet\.type\)/,'Game still uses cropped art');
+assert.match(html,/assets\/pet-art\.js/,'Pixel art engine not loaded');
+assert.doesNotMatch(html,/motion\.svg\?v=31/,'Old motion art still referenced');
+assert.match(html,/V3\.2/,'Expected version stamp missing');
 assert.match(match[1],/storageSet\(KEY/);
 assert.match(match[1],/storageGet\(KEY/);
 assert.match(match[1],/function normalizeBackup\(data\)/);

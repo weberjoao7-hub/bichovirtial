@@ -42,7 +42,7 @@ async function run(){
    await page.goto(base+'/jogar-v2.html',{waitUntil:'load'});
    const adoptionArt=await page.locator('[data-type] img').evaluateAll(async imgs=>Promise.all(imgs.map(async img=>{await img.decode().catch(()=>{});return {src:img.getAttribute('src'),width:img.naturalWidth}})));
    assert.equal(adoptionArt.length,3,'Adoption must show all species');
-   for(const art of adoptionArt){assert.ok(art.src.includes('motion.svg?v=31#idle'),'Cropped adoption art is still used');assert.ok(art.width>0,'Adoption art failed to load '+art.src)}
+   for(const art of adoptionArt){assert.ok(art.src.startsWith('blob:')&&art.src.endsWith('#idle'),'Adoption still uses cropped art');assert.equal(art.width,128,'Adoption art failed to load '+art.src)}
    if(type==='cat')await page.screenshot({path:path.join(output,'adoption-mobile.png')});
    await page.locator('[data-type="'+type+'"]').click();
    await page.locator('#nickname').fill('Teste '+type);
@@ -53,7 +53,32 @@ async function run(){
    await page.reload({waitUntil:'load'});
    await page.locator('#heroPet img').waitFor();
    const loaded=await page.locator('#heroPet img').evaluate(async img=>{if(!img.complete)await new Promise(r=>{img.onload=r;img.onerror=r});return {width:img.naturalWidth,src:img.getAttribute('src')}});
-   assert.ok(loaded.width>0,'Artwork not loaded: '+type+' '+JSON.stringify(loaded));
+   assert.equal(loaded.width,128,'Original pixel art not loaded: '+type+' '+JSON.stringify(loaded));
+   assert.ok(loaded.src.startsWith('blob:')&&loaded.src.endsWith('#idle'),'Wrong sprite source '+type);
+   const silhouette=await page.locator('#heroPet img').evaluate(img=>{
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
+    const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,128,128);
+    const pixels=ctx.getImageData(0,0,128,128).data;let top=0,bottom=0,opaque=0;
+    for(let x=0;x<128;x++){top+=pixels[x*4+3]>0?1:0;bottom+=pixels[(127*128+x)*4+3]>0?1:0}
+    for(let i=3;i<pixels.length;i+=4)opaque+=pixels[i]>0?1:0;
+    return {top,bottom,opaque};
+   });
+   assert.equal(silhouette.top,0,'Sprite touches top edge (cropped ears) '+type);
+   assert.equal(silhouette.bottom,0,'Sprite touches bottom edge '+type);
+   assert.ok(silhouette.opaque>500,'Sprite appears empty '+type);
+   const frameHashes=await page.evaluate(async type=>{
+    const base=PixelPets.url(type);
+    async function sample(pose){
+     const img=new Image();img.src=base+'#'+pose;await img.decode();
+     const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
+     const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);
+     const data=ctx.getImageData(0,0,128,128).data;
+     let hash=0;for(let i=0;i<data.length;i++)hash=(hash+data[i]*(i%101+1))%1000000007;
+     return hash;
+    }
+    return {idle:await sample('idle'),eat:await sample('eat'),sleep:await sample('sleep'),wash:await sample('wash')};
+   },type);
+   assert.equal(new Set(Object.values(frameHashes)).size,4,'Different activities render identical frames '+type);
    for(const [w,h] of [[320,568],[375,667],[390,844],[430,932]]){await checkViewport(page,w,h);await page.screenshot({path:path.join(output,type+'-'+w+'x'+h+'.png')})}
    await page.setViewportSize({width:390,height:844});
    await page.screenshot({path:path.join(output,type+'-mobile.png')});
