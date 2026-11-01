@@ -54,6 +54,21 @@ async function run(){
    await page.locator('#heroPet img').waitFor();
    const loaded=await page.locator('#heroPet img').evaluate(async img=>{if(!img.complete)await new Promise(r=>{img.onload=r;img.onerror=r});return {width:img.naturalWidth,src:img.getAttribute('src')}});
    assert.equal(loaded.width,128,'Original pixel art not loaded: '+type+' '+JSON.stringify(loaded));
+   const garden=await page.locator('#scene .scene-backdrop').evaluate(async img=>{
+    await img.decode();
+    return {width:img.naturalWidth,height:img.naturalHeight,src:img.getAttribute('src')};
+   });
+   assert.equal(garden.width,320,'Garden scene not loaded');
+   assert.equal(garden.height,360,'Garden scene wrong aspect');
+   assert.equal(garden.src,'assets/garden-scene.svg','Unexpected garden asset');
+   const composition=await page.evaluate(()=>{
+    const scene=document.querySelector('#scene').getBoundingClientRect();
+    const hero=document.querySelector('#heroPet').getBoundingClientRect();
+    return {scene:{top:scene.top,bottom:scene.bottom,width:scene.width},hero:{top:hero.top,bottom:hero.bottom,width:hero.width}};
+   });
+   assert.ok(composition.hero.width>=170,'Pet remains too small on 390px mobile: '+JSON.stringify(composition));
+   assert.ok(composition.hero.top>=composition.scene.top-3&&composition.hero.bottom<=composition.scene.bottom+3,'Pet cropped by scene: '+JSON.stringify(composition));
+
    assert.ok(loaded.src.startsWith('blob:')&&loaded.src.endsWith('#idle'),'Wrong sprite source '+type);
    const silhouette=await page.locator('#heroPet img').evaluate(img=>{
     const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
