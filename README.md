@@ -4,13 +4,13 @@ Jogo mobile-first de bichinho virtual, publicado como site estático, sem servid
 
 **Jogar:** https://weberjoao7-hub.github.io/bichovirtial/jogar-v2.html
 
-## Estado atual — V3.2 (31/10/2026)
+## Estado atual — V3.3 (01/11/2026)
 
 - Gato, coelho e urso agora usam sprites originais em pixel art vetorial de 128×128, com silhuetas completas, orelhas inteiras e transparência. O renderizador `assets/pet-art.js` cria cada sprite uma única vez e reutiliza URLs Blob, sem depender dos WebPs recortados.
 - Cada espécie possui 11 poses com dois quadros de desenho diferentes por pose (22 quadros por personagem): parado, feliz, fome, doente, dormir, comer, brincar, banho, cuidados, pular e alongar. As poses são selecionadas por fragmento SVG e respeitam a preferência por movimento reduzido.
 - Ovo pixel art específico para cada espécie, com versão rachada antes do nascimento.
 - Ações, crescimento, moedas, minijogo com intervalo de 60 segundos e conquistas; progresso salvo no localStorage do navegador.
-- Interface principal em uma única tela móvel, com modais para adoção, alimentação, minijogo e ajuda.
+- Interface principal em uma única tela móvel, com modais para adoção, alimentação, minijogo e ajuda. A V3.3 adiciona um cenário original de jardim em pixel art (céu, colinas, cerca, arbustos, flores e tapete), com o personagem maior e posicionado sobre o tapete sem alterar a área dos botões.
 - Backup JSON portátil em **Como jogar → Baixar backup** e restauração validada em **Como jogar → Restaurar backup**. O arquivo contém dados do bichinho e deve ser guardado em local privado.
 - Tratamento de navegadores que bloqueiam o armazenamento local: o jogo continua funcionando, com aviso ⚠ na versão, mas não consegue preservar progresso nesse caso.
 
@@ -21,6 +21,8 @@ Abra index.html ou jogar-v2.html em um servidor estático. Ambos devem permanece
 **Limitações conhecidas:** a nova arte de 128×128 precisa de revisão visual em aparelhos reais; as animações possuem dois quadros próprios por ação, mas movimentos mais fluidos e maior variedade de quadros ainda são desejáveis. Testes manuais em diferentes aparelhos reais são necessários. O progresso fica no navegador/dispositivo e não é sincronizado entre aparelhos.
 
 ## Histórico recente
+
+- **V3.3 (01/11/2026):** cenário de jardim original em SVG pixel art, renderizado atrás dos personagens e sem bloquear interações; personagem ampliado com limites responsivos para telas curtas; testes de integridade da arte e de carregamento/posicionamento no Chromium. A publicação e o resultado visual dependem da confirmação do workflow e revisão das capturas.
 
 - **V3.2 (31/10/2026):** substituição integral dos sprites recortados por três personagens completos e autorais em pixel art 128×128; 22 quadros por espécie, dois por pose, sem reutilizar o WebP cortado. Adoção e jogo usam a mesma arte. Testes ampliados para verificar as bordas transparentes, poses visualmente distintas e as quatro resoluções móveis.
 
