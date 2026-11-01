@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="360" viewBox="0 0 320 360" preserveAspectRatio="none" shape-rendering="crispEdges">
+<!-- Original layered pixel garden. Decoration only; the animal is rendered separately. -->
+<rect width="320" height="360" fill="#bfeaff"/>
+<rect y="0" width="320" height="78" fill="#b2e5ff"/>
+<rect x="0" y="78" width="320" height="75" fill="#c6edff"/>
+<rect x="244" y="31" width="29" height="29" fill="#fff1b5"/>
+<rect x="249" y="25" width="19" height="6" fill="#fff7d2"/><rect x="249" y="60" width="19" height="6" fill="#fff7d2"/><rect x="238" y="37" width="6" height="17" fill="#fff7d2"/><rect x="273" y="37" width="6" height="17" fill="#fff7d2"/>
+<g fill="#f6fdff"><path d="M29 67v-8h12v-7h21v6h16v8h9v8H24v-7z"/><path d="M194 101v-8h14v-7h19v7h17v8h9v8h-64v-8z"/></g>
+<g fill="#dcefff"><rect x="31" y="73" width="51" height="3"/><rect x="195" y="107" width="53" height="3"/></g>
+<path d="M0 191v-28h22v-13h24v-17h29v-14h28v17h20v21h20v34z" fill="#a3d6c2"/>
+<path d="M136 192v-22h24v-17h24v-16h24v12h22v13h19v-13h26v14h25v28z" fill="#a8d4c9"/>
+<path d="M0 213v-20h29v-11h30v9h33v-13h28v11h35v9h27v-14h32v11h32v-13h30v11h44v20z" fill="#80bc9c"/>
+<path d="M0 234v-19h38v-10h43v6h42v-8h53v10h43v-9h40v8h61v22z" fill="#75b98c"/>
+<rect x="0" y="234" width="320" height="126" fill="#a4d78c"/>
+<path d="M0 249h320v9H0z" fill="#99cf82"/><path d="M0 289h320v8H0z" fill="#a7d98e"/>
+<path d="M0 333h320v8H0z" fill="#9acc80"/>
+<!-- Small picket fence and bushes behind the play area -->
+<g fill="#e9d9ae"><rect x="0" y="222" width="320" height="5"/><rect x="0" y="239" width="320" height="5"/><rect x="14" y="217" width="9" height="30"/><rect x="40" y="217" width="9" height="30"/><rect x="66" y="217" width="9" height="30"/><rect x="247" y="217" width="9" height="30"/><rect x="273" y="217" width="9" height="30"/><rect x="299" y="217" width="9" height="30"/></g>
+<g fill="#ccad7c"><rect x="0" y="226" width="320" height="2"/><rect x="0" y="243" width="320" height="2"/></g>
+<g><path d="M0 263v-23h9v-11h15v-7h20v7h12v12h11v22z" fill="#4c9d74"/><path d="M0 257v-20h10v-8h20v-8h16v12h13v24z" fill="#65b980"/><rect x="8" y="238" width="15" height="5" fill="#87ce90"/><rect x="32" y="229" width="10" height="5" fill="#88ce91"/>
+<path d="M253 264v-22h10v-12h13v-9h21v8h13v12h10v23z" fill="#4c9d74"/><path d="M260 260v-19h12v-12h20v-5h11v15h17v21z" fill="#6cbd82"/><rect x="282" y="230" width="15" height="5" fill="#90d797"/></g>
+<!-- Soft pixel-edged play mat and contact shadow, centered on the character's feet -->
+<path d="M93 301v-8h18v-7h99v7h18v8h11v15h-11v7h-20v6h-95v-6H93v-7H82v-15z" fill="#7bb98a"/>
+<path d="M99 298v-7h21v-5h82v5h21v7h10v15h-10v7h-21v5h-82v-5H99v-7H89v-15z" fill="#e9c9e5"/>
+<path d="M108 298v-5h24v-4h57v4h24v5h10v15h-10v5h-24v4h-57v-4h-24v-5H98v-15z" fill="#f8e0ed"/>
+<path d="M121 310h77v4h-77z" fill="#dcbcd7"/>
+<path d="M35 262v-5h4v-3h9v3h4v5z" fill="#a7c7a3"/><rect x="40" y="256" width="7" height="2" fill="#d5e2c6"/><path d="M271 263v-5h4v-3h12v3h4v5z" fill="#a7c7a3"/><rect x="276" y="257" width="10" height="2" fill="#d5e2c6"/><path d="M56 341v-5h4v-3h4v3h4v5z" fill="#a7c7a3"/><rect x="61" y="335" width="4" height="2" fill="#d5e2c6"/><path d="M260 344v-5h4v-3h6v3h4v5z" fill="#a7c7a3"/><rect x="265" y="338" width="4" height="2" fill="#d5e2c6"/>
+<g><rect x="21" y="280" width="2" height="11" fill="#4c9d65"/><rect x="17" y="276" width="4" height="5" fill="#f5a4b8"/><rect x="23" y="276" width="4" height="5" fill="#f5a4b8"/><rect x="20" y="272" width="4" height="5" fill="#f5a4b8"/><rect x="20" y="279" width="4" height="5" fill="#f5a4b8"/><rect x="21" y="277" width="2" height="2" fill="#fff3b0"/></g><g><rect x="43" y="325" width="2" height="11" fill="#4c9d65"/><rect x="39" y="321" width="4" height="5" fill="#ffe28c"/><rect x="45" y="321" width="4" height="5" fill="#ffe28c"/><rect x="42" y="317" width="4" height="5" fill="#ffe28c"/><rect x="42" y="324" width="4" height="5" fill="#ffe28c"/><rect x="43" y="322" width="2" height="2" fill="#fff3b0"/></g><g><rect x="285" y="281" width="2" height="11" fill="#4c9d65"/><rect x="281" y="277" width="4" height="5" fill="#f7a0c3"/><rect x="287" y="277" width="4" height="5" fill="#f7a0c3"/><rect x="284" y="273" width="4" height="5" fill="#f7a0c3"/><rect x="284" y="280" width="4" height="5" fill="#f7a0c3"/><rect x="285" y="278" width="2" height="2" fill="#fff3b0"/></g><g><rect x="304" y="327" width="2" height="11" fill="#4c9d65"/><rect x="300" y="323" width="4" height="5" fill="#ffdd81"/><rect x="306" y="323" width="4" height="5" fill="#ffdd81"/><rect x="303" y="319" width="4" height="5" fill="#ffdd81"/><rect x="303" y="326" width="4" height="5" fill="#ffdd81"/><rect x="304" y="324" width="2" height="2" fill="#fff3b0"/></g><g><rect x="17" y="346" width="2" height="11" fill="#4c9d65"/><rect x="13" y="342" width="4" height="5" fill="#d5a7fa"/><rect x="19" y="342" width="4" height="5" fill="#d5a7fa"/><rect x="16" y="338" width="4" height="5" fill="#d5a7fa"/><rect x="16" y="345" width="4" height="5" fill="#d5a7fa"/><rect x="17" y="343" width="2" height="2" fill="#fff3b0"/></g><g><rect x="295" y="348" width="2" height="11" fill="#4c9d65"/><rect x="291" y="344" width="4" height="5" fill="#f5a4b8"/><rect x="297" y="344" width="4" height="5" fill="#f5a4b8"/><rect x="294" y="340" width="4" height="5" fill="#f5a4b8"/><rect x="294" y="347" width="4" height="5" fill="#f5a4b8"/><rect x="295" y="345" width="2" height="2" fill="#fff3b0"/></g>
+<g fill="#76b96d"><rect x="73" y="272" width="5" height="2"/><rect x="234" y="270" width="7" height="2"/><rect x="31" y="307" width="7" height="2"/><rect x="276" y="306" width="8" height="2"/><rect x="86" y="346" width="7" height="2"/><rect x="235" y="347" width="8" height="2"/></g>
+</svg>
