@@ -164,7 +164,7 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 .choices button[data-type] span{font-size:11px;white-space:nowrap}
 .hero-pet{top:59%!important;max-height:74%}
 .pet-shadow{top:90%}
-.console:before{content:'BICHO VIRTUAL • V3.2'}
+.console:before{content:'BICHO VIRTUAL • V3.3'}
 /* V3.1: animated, self-contained pixel characters and species-specific pixel eggs. */
 .hero-pet:not(.pet-egg){animation:none!important}
 .hero-pet.pet-egg svg{display:block;width:77%;height:94%;max-height:100%;image-rendering:pixelated;filter:drop-shadow(0 5px 0 #5b775c4d)}
@@ -172,15 +172,24 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 .hero-pet[data-mood=dead] img{filter:grayscale(1) opacity(.58)}
 .hero-pet img{image-rendering:pixelated!important}
 @media(prefers-reduced-motion:reduce){.hero-pet.pet-egg{animation:none!important}}
-.backup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.backup-actions button,.backup-import{border:2px solid #c7a8d6;border-radius:12px;background:#f3eafa;color:#523d67;min-height:48px;padding:9px 4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer}.backup-import{position:relative}.backup-import input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.backup-import:focus-within{outline:3px solid #365ca9;outline-offset:2px}@media(max-width:350px){.backup-actions{grid-template-columns:1fr}} /* V3.2: complete hand-drawn 128px pixel characters with two unique frames per pose */.hero-pet img{object-fit:contain;image-rendering:pixelated!important}.pet-shadow{display:none}</style>
+.backup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.backup-actions button,.backup-import{border:2px solid #c7a8d6;border-radius:12px;background:#f3eafa;color:#523d67;min-height:48px;padding:9px 4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer}.backup-import{position:relative}.backup-import input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.backup-import:focus-within{outline:3px solid #365ca9;outline-offset:2px}@media(max-width:350px){.backup-actions{grid-template-columns:1fr}} /* V3.3: complete hand-drawn 128px pixel characters with two unique frames per pose */.hero-pet img{object-fit:contain;image-rendering:pixelated!important}.pet-shadow{display:none}
+/* V3.3 — pixel garden: grounded art, larger recognizable pet, no extra scrolling */
+.scene-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;image-rendering:pixelated;pointer-events:none;user-select:none;z-index:0}
+.scene:before,.scene:after{display:none!important}
+.scene .cloud{display:none}
+.hero-pet{top:61%!important;width:min(74vw,32dvh,265px)!important;height:min(74vw,32dvh,265px)!important;max-height:80%!important;max-width:80%!important}
+.hero-pet.pet-egg{width:min(62vw,27dvh,220px)!important;height:min(62vw,27dvh,220px)!important}
+.hero-pet img{transform:scale(1.05);filter:drop-shadow(0 3px 0 #4f704e55)}
+@media(max-height:650px){.hero-pet{top:60%!important;width:min(66vw,29dvh,190px)!important;height:min(66vw,29dvh,190px)!important;max-height:74%!important}.hero-pet.pet-egg{width:min(53vw,24dvh,150px)!important;height:min(53vw,24dvh,150px)!important}}
+</style>
 </head>
 <body>
 <main class="layout">
-<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V3.2</span> ✦</strong><span id="clock"></span></header>
+<header class="top"><strong>✦ BICHO VIRTUAL <span class="version-stamp">V3.3</span> ✦</strong><span id="clock"></span></header>
 <section class="console" aria-label="Console de bichinho virtual">
 <div class="bezel"><div class="screen">
 <div class="screen-head"><span id="dayLabel">DIA 1</span><span id="weather">☀ ENSOLARADO</span></div>
-<div class="scene" id="scene"><span class="cloud a">✿</span><span class="cloud b">✦</span><div class="floor"></div><div id="petShadow" class="pet-shadow"></div><div id="sceneProp" class="scene-prop"></div><span id="heroPet" class="hero-pet" aria-label="Seu bichinho" role="img">🥚</span><canvas id="pet" width="64" height="64" aria-label="Desenho alternativo" style="display:none"></canvas></div>
+<div class="scene" id="scene"><img class="scene-backdrop" src="assets/garden-scene.svg" alt="" aria-hidden="true" decoding="async"><span class="cloud a">✿</span><span class="cloud b">✦</span><div class="floor"></div><div id="petShadow" class="pet-shadow"></div><div id="sceneProp" class="scene-prop"></div><span id="heroPet" class="hero-pet" aria-label="Seu bichinho" role="img">🥚</span><canvas id="pet" width="64" height="64" aria-label="Desenho alternativo" style="display:none"></canvas></div>
 <div class="screen-bottom"><span id="status">♥ FELIZ</span><span class="tiny-pill" id="life">BEBÊ</span><span id="coins">★ 15</span></div>
 </div></div>
 <div class="nameplate">♡ LOVE YOUR LITTLE FRIEND ♡</div>
@@ -202,7 +211,7 @@ body{overflow:hidden;padding:env(safe-area-inset-top) 7px max(5px,env(safe-area-
 const KEY='bichovirtual_save_v1',TICK=300000,MAX=100,GAME_COOLDOWN_MS=60000;
 const $=id=>document.getElementById(id),clamp=n=>Math.max(0,Math.min(MAX,n));
 let storageError=false;
-function storageFailure(){storageError=true;const badge=document.querySelector('.version-stamp');if(badge){badge.textContent='V3.2 ⚠';badge.title='Salvamento automático indisponível neste navegador';}}
+function storageFailure(){storageError=true;const badge=document.querySelector('.version-stamp');if(badge){badge.textContent='V3.3 ⚠';badge.title='Salvamento automático indisponível neste navegador';}}
 function storageGet(key){try{return localStorage.getItem(key)}catch(e){storageFailure();return null}}
 function storageSet(key,value){try{localStorage.setItem(key,value);return true}catch(e){storageFailure();return false}}
 function storageRemove(key){try{localStorage.removeItem(key);return true}catch(e){storageFailure();return false}}
