@@ -33,6 +33,11 @@ for(const type of ['cat','bunny','bear']){
  assert.match(whole,/<svg/);assert.notEqual(whole,cracked);assert.match(cracked,/stroke-linejoin/);
  console.log('PASS '+type+': 11 poses, 22 unique drawn frames, complete silhouettes and eggs');
 }
+const garden=fs.readFileSync(path.join(root,'assets/garden-scene.svg'),'utf8');
+assert.match(garden,/<svg[^>]+viewBox="0 0 320 360"/,'Garden artwork is missing its responsive canvas');
+assert.ok((garden.match(/<rect\b/g)||[]).length>=20,'Garden should contain original pixel details');
+assert.match(html,/class="scene-backdrop" src="assets\/garden-scene\.svg"/,'Game is not using the new garden scene');
+assert.match(html,/width:min\(74vw,32dvh,265px\)/,'Pet size must be responsive and more readable');
 assert.match(html,/height:100dvh/);
 assert.match(html,/lastIdle=Date\.now\(\)/,'Idle timer must start when page loads');
 assert.match(html,/lastIdle=Date\.now\(\);pet\.animation=kind/,'Idle timer must reset after interactions');
@@ -40,7 +45,7 @@ assert.match(html,/PixelPets\.url\(k\)/,'Adoption still uses cropped art');
 assert.match(html,/PixelPets\.url\(pet\.type\)/,'Game still uses cropped art');
 assert.match(html,/assets\/pet-art\.js/,'Pixel art engine not loaded');
 assert.doesNotMatch(html,/motion\.svg\?v=31/,'Old motion art still referenced');
-assert.match(html,/V3\.2/,'Expected version stamp missing');
+assert.match(html,/V3\.3/,'Expected version stamp missing');
 assert.match(match[1],/storageSet\(KEY/);
 assert.match(match[1],/storageGet\(KEY/);
 assert.match(match[1],/function normalizeBackup\(data\)/);
