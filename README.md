@@ -4,9 +4,10 @@ Jogo mobile-first de bichinho virtual, publicado como site estático, sem servid
 
 **Jogar:** https://weberjoao7-hub.github.io/bichovirtial/jogar-v2.html
 
-## Estado atual — V3.3 (01/11/2026)
+## Estado atual — V3.4 (02/11/2026)
 
 - Gato, coelho e urso agora usam sprites originais em pixel art vetorial de 128×128, com silhuetas completas, orelhas inteiras e transparência. O renderizador `assets/pet-art.js` cria cada sprite uma única vez e reutiliza URLs Blob, sem depender dos WebPs recortados.
+- **Crescimento visual real (V3.4):** bebê, jovem e adulto possuem versões próprias de cada espécie: cabeça proporcionalmente maior e corpo menor no bebê, proporções intermediárias no jovem e acessórios diferentes no adulto (coleira do gato, laço do coelho e lenço do urso). Os 11 estados animados continuam disponíveis em cada fase, sem modificar os dados de salvamento.
 - Cada espécie possui 11 poses com dois quadros de desenho diferentes por pose (22 quadros por personagem): parado, feliz, fome, doente, dormir, comer, brincar, banho, cuidados, pular e alongar. As poses são selecionadas por fragmento SVG e respeitam a preferência por movimento reduzido.
 - Ovo pixel art específico para cada espécie, com versão rachada antes do nascimento.
 - Ações, crescimento, moedas, minijogo com intervalo de 60 segundos e conquistas; progresso salvo no localStorage do navegador.
@@ -16,11 +17,13 @@ Jogo mobile-first de bichinho virtual, publicado como site estático, sem servid
 
 ## Desenvolvimento e verificação
 
-Abra index.html ou jogar-v2.html em um servidor estático. Ambos devem permanecer idênticos. Execute `node tests/smoke.cjs` para validar os três animais, estados do ovo, sintaxe, animações e integridade dos arquivos de arte. O workflow de qualidade também executa `node tests/browser.cjs` com Playwright e Chromium, simulando ações, backup/restauração e quatro tamanhos de tela. São geradas 12 capturas de tela dos personagens (3 espécies × 4 resoluções) e uma da adoção, anexadas como artefatos do workflow para revisão visual. Para rodar os testes de navegador localmente, instale Playwright e Chromium.
+Abra index.html ou jogar-v2.html em um servidor estático. Ambos devem permanecer idênticos. Execute `node tests/smoke.cjs` para validar os três animais, estados do ovo, sintaxe, animações e integridade dos arquivos de arte. O workflow de qualidade também executa `node tests/browser.cjs` com Playwright e Chromium, simulando ações, backup/restauração e quatro tamanhos de tela. São geradas capturas dos personagens em quatro resoluções móveis (3 espécies × 4 resoluções), das fases jovem e adulta e da adoção, anexadas como artefatos do workflow para revisão visual. A suíte verifica também diferenças reais entre os pixels dos três estágios de crescimento. Para rodar os testes de navegador localmente, instale Playwright e Chromium.
 
 **Limitações conhecidas:** a nova arte de 128×128 precisa de revisão visual em aparelhos reais; as animações possuem dois quadros próprios por ação, mas movimentos mais fluidos e maior variedade de quadros ainda são desejáveis. Testes manuais em diferentes aparelhos reais são necessários. O progresso fica no navegador/dispositivo e não é sincronizado entre aparelhos.
 
 ## Histórico recente
+
+- **V3.4 (02/11/2026):** novos desenhos procedurais de bebê, jovem e adulto para gato, coelho e urso, com proporções anatômicas e acessórios distintos. O renderizador seleciona a variante pela fase atual sem alterar a estrutura do progresso salvo. Testes estáticos e de navegador ampliados para conferir as três aparências e as transições de crescimento. A publicação depende da confirmação do workflow.
 
 - **V3.3 (01/11/2026):** cenário de jardim original em SVG pixel art, renderizado atrás dos personagens e sem bloquear interações; personagem ampliado com limites responsivos para telas curtas; testes de integridade da arte e de carregamento/posicionamento no Chromium. A publicação e o resultado visual dependem da confirmação do workflow e revisão das capturas.
 
