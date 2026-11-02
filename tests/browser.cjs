@@ -70,6 +70,19 @@ async function run(){
    assert.ok(composition.hero.top>=composition.scene.top-3&&composition.hero.bottom<=composition.scene.bottom+3,'Pet cropped by scene: '+JSON.stringify(composition));
 
    assert.ok(loaded.src.startsWith('blob:')&&loaded.src.endsWith('#idle'),'Wrong sprite source '+type);
+   const growthHashes=await page.evaluate(async type=>{
+    const values={};
+    for(const growth of PixelPets.growths){
+     const img=new Image();img.src=PixelPets.url(type,growth)+'#idle';await img.decode();
+     const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
+     const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);
+     const data=ctx.getImageData(0,0,128,128).data;
+     let hash=0;for(let i=0;i<data.length;i++)hash=(hash+data[i]*(i%101+1))%1000000007;
+     values[growth]=hash;
+    }
+    return values;
+   },type);
+   assert.equal(new Set(Object.values(growthHashes)).size,3,'Growth stages look identical: '+type+' '+JSON.stringify(growthHashes));
    const silhouette=await page.locator('#heroPet img').evaluate(img=>{
     const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
     const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,128,128);
@@ -97,6 +110,15 @@ async function run(){
    for(const [w,h] of [[320,568],[375,667],[390,844],[430,932]]){await checkViewport(page,w,h);await page.screenshot({path:path.join(output,type+'-'+w+'x'+h+'.png')})}
    await page.setViewportSize({width:390,height:844});
    await page.screenshot({path:path.join(output,type+'-mobile.png')});
+   for(const [growth,minutes] of [['juvenile',15],['adult',30]]){
+    await updateSaved(page,{born:Date.now()-minutes*60000,updated:Date.now()});
+    await page.reload({waitUntil:'load'});
+    await page.locator('#heroPet img').waitFor();
+    const stageArt=await page.locator('#heroPet img').getAttribute('src');
+    const expectedArt=await page.evaluate(({type,growth})=>PixelPets.url(type,growth)+'#idle',{type,growth});
+    assert.equal(stageArt,expectedArt,'Game did not select '+growth+' artwork for '+type);
+    await page.screenshot({path:path.join(output,type+'-'+growth+'-mobile.png')});
+   }
    const before=await state(page);
    await page.locator('[data-act="feed"]').click();
    await page.locator('[data-food="0"]').click();
