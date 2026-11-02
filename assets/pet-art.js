@@ -61,14 +61,34 @@ function props(t,p,f,c){let s='';if(p==='eat'){s+=path('M42 108H86V112H82V120H46
  if(p==='hungry')s+=ellipse(100,106,9,3,'#A98C7A')+rect(96,100,8,4,'#FFFFFF');
  if(p==='sick')s+=path('M93 49H109V53H93Z','#FFFFFF')+rect(104,48,5,6,'#ED7A88');
  return s}
-function frame(t,p,f,c){return `<g class="frame frame-${p}-${f}">${body(t,p,f,c)}${head(t,p,f,c)}${face(t,p,f,c)}${paws(t,p,f,c)}${props(t,p,f,c)}</g>`}
-function generate(t){const c=species[t];if(!c)throw Error("Unknown pet type");let css=`.frame{display:none;shape-rendering:crispEdges}.frame-idle-0,.frame-idle-1{display:inline}.frame-idle-0{animation:hold 2.8s steps(1,end) infinite}.frame-idle-1{animation:blink 2.8s steps(1,end) infinite}@keyframes hold{0%,82%,100%{opacity:1}83%,93%{opacity:0}}@keyframes blink{0%,82%,100%{opacity:0}83%,93%{opacity:1}}@keyframes a{0%,49%{opacity:1}50%,100%{opacity:0}}@keyframes b{0%,49%{opacity:0}50%,100%{opacity:1}}`;
+const growths=['baby','juvenile','adult'];
+function scaledPart(part,growth,kind){
+ if(growth==='adult')return part;
+ const baby=growth==='baby';
+ const scale=kind==='head'?(baby?1.06:1.02):(baby?.85:.95);
+ const anchor=kind==='head'?65:116,shift=kind==='head'?(baby?7:2):0;
+ return `<g transform="translate(0 ${shift}) translate(64 ${anchor}) scale(${scale}) translate(-64 -${anchor})">${part}</g>`;
+}
+function growthMarks(t,g,c){
+ if(g==='baby')return ellipse(36,72,6,4,c.pink)+ellipse(92,72,6,4,c.pink)+rect(57,44,4,3,c.light)+rect(69,44,4,3,c.light);
+ if(g==='juvenile')return rect(59,88,10,4,c.light)+rect(62,91,4,3,c.shade);
+ if(t==='cat')return rect(46,85,36,5,c.deep)+rect(62,90,7,7,'#EBC65A')+rect(64,92,3,3,'#FFF3C2');
+ if(t==='bunny')return path('M51 88H61V92H67V88H77V97H67V94H61V97H51Z','#C88EBA')+rect(62,91,4,4,'#FFE5B5');
+ return path('M43 86H86V91H81V98H75V103H68V95H49V91H43Z','#B95C59')+rect(47,88,34,3,'#E78C76');
+}
+function frame(t,p,f,c,growth){
+ const base=scaledPart(body(t,p,f,c),growth,'body');
+ const upper=scaledPart(head(t,p,f,c)+face(t,p,f,c),growth,'head');
+ const feet=scaledPart(paws(t,p,f,c),growth,'paws');
+ return `<g class="frame frame-${p}-${f}">${base}${upper}${feet}${growthMarks(t,growth,c)}${props(t,p,f,c)}</g>`;
+}
+function generate(t,growth='adult'){const c=species[t];if(!c)throw Error("Unknown pet type");if(!growths.includes(growth))throw Error('Unknown growth stage');let css=`.frame{display:none;shape-rendering:crispEdges}.frame-idle-0,.frame-idle-1{display:inline}.frame-idle-0{animation:hold 2.8s steps(1,end) infinite}.frame-idle-1{animation:blink 2.8s steps(1,end) infinite}@keyframes hold{0%,82%,100%{opacity:1}83%,93%{opacity:0}}@keyframes blink{0%,82%,100%{opacity:0}83%,93%{opacity:1}}@keyframes a{0%,49%{opacity:1}50%,100%{opacity:0}}@keyframes b{0%,49%{opacity:0}50%,100%{opacity:1}}`;
  for(const p of poses.filter(x=>x!=='idle')){css+=`#${p}:target~.frame-idle-0,#${p}:target~.frame-idle-1{display:none}`;css+=`#${p}:target~.frame-${p}-0,#${p}:target~.frame-${p}-1{display:inline}`;css+=`#${p}:target~.frame-${p}-0{animation:a ${p==='sleep'?'2.8s':p==='play'?'0.48s':'0.7s'} steps(1,end) infinite}`;css+=`#${p}:target~.frame-${p}-1{animation:b ${p==='sleep'?'2.8s':p==='play'?'0.48s':'0.7s'} steps(1,end) infinite}`}
  css+='@media(prefers-reduced-motion:reduce){.frame{animation:none!important}.frame-idle-1{display:none}';for(const p of poses.filter(x=>x!=='idle'))css+=`#${p}:target~.frame-${p}-1{display:none}`;css+='}';
  let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Bichinho ${t}" shape-rendering="crispEdges"><style>${css}</style>`;
- for(const p of poses)svg+=`<g id="${p}"/>`;for(const p of poses)for(let f=0;f<2;f++)svg+=frame(t,p,f,c);
+ for(const p of poses)svg+=`<g id="${p}"/>`;for(const p of poses)for(let f=0;f<2;f++)svg+=frame(t,p,f,c,growth);
  return svg+'</svg>'}
 const cache=Object.create(null);
-function url(type){if(!species[type])throw Error('Unknown pet type');if(!cache[type])cache[type]=URL.createObjectURL(new Blob([generate(type)],{type:'image/svg+xml'}));return cache[type]}
-window.PixelPets=Object.freeze({url,generate,poses:Object.freeze(poses)});
+function url(type,growth='adult'){if(!species[type])throw Error('Unknown pet type');if(!growths.includes(growth))throw Error('Unknown growth stage');const key=type+':'+growth;if(!cache[key])cache[key]=URL.createObjectURL(new Blob([generate(type,growth)],{type:'image/svg+xml'}));return cache[key]}
+window.PixelPets=Object.freeze({url,generate,poses:Object.freeze(poses),growths:Object.freeze(growths)});
 })();
