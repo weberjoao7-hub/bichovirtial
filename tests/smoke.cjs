@@ -16,8 +16,19 @@ vm.runInNewContext(source,sandbox);
 const art=sandbox.window.PixelPets;
 const poses=['idle','happy','hungry','sick','sleep','eat','play','wash','heal','hop','stretch'];
 assert.deepEqual(Array.from(art.poses),poses);
+assert.deepEqual(Array.from(art.growths),['baby','juvenile','adult']);
 for(const type of ['cat','bunny','bear']){
  const svg=art.generate(type);
+ const baby=art.generate(type,'baby'),juvenile=art.generate(type,'juvenile');
+ assert.notEqual(baby,juvenile,type+' baby and juvenile look identical');
+ assert.notEqual(juvenile,svg,type+' juvenile and adult look identical');
+ for(const variant of [baby,juvenile,svg]){
+  assert.match(variant,/viewBox="0 0 128 128"/);
+  assert.match(variant,/frame frame-idle-0/);
+  assert.match(variant,/frame frame-sleep-1/);
+ }
+ assert.match(baby,/scale\(1\.06\)/,type+' baby head should have distinct proportions');
+ assert.match(juvenile,/scale\(1\.02\)/,type+' juvenile head should have distinct proportions');
  assert.match(svg,/viewBox="0 0 128 128"/,'Unexpected canvas '+type);
  assert.match(svg,/shape-rendering="crispEdges"/,'Missing crisp pixel edges '+type);
  assert.match(svg,/prefers-reduced-motion:reduce/,'Reduced-motion support missing '+type);
@@ -41,11 +52,11 @@ assert.match(html,/width:min\(74vw,32dvh,265px\)/,'Pet size must be responsive a
 assert.match(html,/height:100dvh/);
 assert.match(html,/lastIdle=Date\.now\(\)/,'Idle timer must start when page loads');
 assert.match(html,/lastIdle=Date\.now\(\);pet\.animation=kind/,'Idle timer must reset after interactions');
-assert.match(html,/PixelPets\.url\(k\)/,'Adoption still uses cropped art');
-assert.match(html,/PixelPets\.url\(pet\.type\)/,'Game still uses cropped art');
+assert.match(html,/PixelPets\.url\(k,'baby'\)/,'Adoption still uses cropped art');
+assert.match(html,/PixelPets\.url\(pet\.type,growth\)/,'Game still uses cropped art');
 assert.match(html,/assets\/pet-art\.js/,'Pixel art engine not loaded');
 assert.doesNotMatch(html,/motion\.svg\?v=31/,'Old motion art still referenced');
-assert.match(html,/V3\.3/,'Expected version stamp missing');
+assert.match(html,/V3\.4/,'Expected version stamp missing');
 assert.match(match[1],/storageSet\(KEY/);
 assert.match(match[1],/storageGet\(KEY/);
 assert.match(match[1],/function normalizeBackup\(data\)/);
